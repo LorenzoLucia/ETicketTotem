@@ -1,0 +1,5 @@
+asyncio==3.4.3
+mfrc522==0.0.7
+RPi.GPIO==0.7.1
+spidev==3.6
+websockets==15.0.1

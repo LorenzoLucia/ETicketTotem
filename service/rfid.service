@@ -1,0 +1,13 @@
+[Unit]
+Description=RFID reader
+After=network.target
+
+[Service]
+ExecStart=/home/pi/ETicketTotem/venv/bin/python3 /home/pi/ETicketTotem/read_rfid.py
+WorkingDirectory=/home/pi/ETicketTotem/
+Restart=always
+User=pi
+Group=pi
+
+[Install]
+WantedBy=multi-user.target
