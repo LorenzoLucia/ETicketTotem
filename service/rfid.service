@@ -8,6 +8,8 @@ WorkingDirectory=/home/pi/ETicketTotem/
 Restart=always
 User=pi
 Group=pi
+StandardOutput=append:/home/pi/ETicketTotem/logs/rfid.log
+StandardError=append:/home/pi/ETicketTotem/logs/rfid_error.log
 
 [Install]
 WantedBy=multi-user.target
