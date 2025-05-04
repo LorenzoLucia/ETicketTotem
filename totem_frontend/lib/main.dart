@@ -14,12 +14,10 @@ void main() async {
     // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
     runApp(MyApp());
   } catch (e) {
-    runApp(MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Initialization failed: $e'),
-        ),
+    runApp(
+      MaterialApp(
+        home: Scaffold(body: Center(child: Text('Initialization failed: $e'))),
       ),
-    ));
+    );
   }
 }

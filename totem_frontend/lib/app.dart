@@ -2,6 +2,7 @@ import 'package:totem_frontend/services/api_service.dart';
 import 'package:flutter/material.dart';
 
 import 'home.dart';
+import 'totem_ticket_page.dart';
 
 final baseUrl = 'https://example.com/api'; // Replace with your actual base URL
 
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: TicketPage(apiService: this.apiService),
+      home: LicensePlateInputScreen(apiService: apiService),
     );
   }
 }
