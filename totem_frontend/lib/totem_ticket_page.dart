@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:totem_frontend/pay_screen.dart';
+import 'package:totem_frontend/man_or_nfc_screen.dart';
 import 'package:totem_frontend/services/api_service.dart';
 import 'package:totem_frontend/wheel_time_picker_widget.dart';
 
@@ -21,20 +21,46 @@ class _LicensePlateInputScreenState extends State<LicensePlateInputScreen> {
   static const double fontSizeLarge = 18;
   static const double containerHeight = 40;
   static const double paddingSize = 7;
+  final TextEditingController plateController = TextEditingController();
+  final TextEditingController zoneController = TextEditingController();
 
   DateTime now = DateTime.now();
 
   String? plate;
-  double parkingTime = 1; // Default to 1 hour
-  double price = 0.0;
+  String? zone;
+  double parkingTime = 0; // Default to 1 hour
+  double tikcetPrice = 0.0;
 
   // Fixed zone and price
-  final String fixedZone = 'Zone A';
   final double fixedZonePrice = 2.0;
 
+  @override
+  void initState() {
+    super.initState();
+
+    // Start listening to changes.
+    plateController.addListener(_saveTextValues);
+    zoneController.addListener(_saveTextValues);
+  }
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    zoneController.dispose();
+    plateController.dispose();
+    super.dispose();
+  }
+
   void calculatePrice() {
+    tikcetPrice = double.parse(
+      (fixedZonePrice * parkingTime).toStringAsFixed(1),
+    );
+  }
+
+  void _saveTextValues() {
     setState(() {
-      price = fixedZonePrice * parkingTime / 2;
+      plateController.text == '' ? plate = null : plate = plateController.text;
+      zoneController.text == '' ? zone = null : zone = zoneController.text;
     });
   }
 
@@ -89,6 +115,7 @@ class _LicensePlateInputScreenState extends State<LicensePlateInputScreen> {
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: TextField(
+                              controller: plateController,
                               textAlign: TextAlign.left,
                               style: const TextStyle(
                                 fontSize: fontSizeLarge,
@@ -101,6 +128,15 @@ class _LicensePlateInputScreenState extends State<LicensePlateInputScreen> {
                                 hintText: 'Insert Plate',
                                 hintStyle: TextStyle(color: Colors.grey),
                               ),
+                              // onTapOutside: (event) {
+                              //   FocusManager.instance.primaryFocus?.unfocus();
+                              //   plate = plateController.text;
+                              //   // print('onTapOutside');
+                              //   // print(plate);
+                              // },
+                              // onEditingComplete: () {
+                              //   plate = plateController.text;
+                              // },
                             ),
                           ),
                         ],
@@ -142,6 +178,7 @@ class _LicensePlateInputScreenState extends State<LicensePlateInputScreen> {
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: TextField(
+                              controller: zoneController,
                               textAlign: TextAlign.left,
                               style: const TextStyle(
                                 fontSize: fontSizeLarge,
@@ -154,6 +191,12 @@ class _LicensePlateInputScreenState extends State<LicensePlateInputScreen> {
                                 hintText: 'Insert Zone',
                                 hintStyle: TextStyle(color: Colors.grey),
                               ),
+                              // onTapOutside: (event) {
+                              //   FocusManager.instance.primaryFocus?.unfocus();
+                              //   zone = zoneController.text;
+                              //   // print('onTapOutside');
+                              //   // print(zone);
+                              // },
                             ),
                           ),
                         ],
@@ -212,11 +255,9 @@ class _LicensePlateInputScreenState extends State<LicensePlateInputScreen> {
 
                       Spacer(),
 
-                      Spacer(),
-
                       // Testo Prezzo
                       Text(
-                        'Price: \$${price.toStringAsFixed(2)}',
+                        'Price: \$${tikcetPrice.toStringAsFixed(2)}',
                         style: TextStyle(
                           fontSize: fontSizeLarge,
                           fontWeight: FontWeight.bold,
@@ -228,16 +269,16 @@ class _LicensePlateInputScreenState extends State<LicensePlateInputScreen> {
                       // Pulsante di conferma
                       ElevatedButton(
                         onPressed:
-                            plate != null
+                            plate != null && zone != null && parkingTime != 0
                                 ? () {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                       builder:
-                                          (context) => PayScreen(
-                                            amount: price,
+                                          (context) => ManOrNfcScreen(
+                                            amount: tikcetPrice,
                                             duration: (parkingTime * 2).toInt(),
-                                            zone: fixedZone,
+                                            zone: zone!,
                                             plate: plate!,
                                             apiService: widget.apiService,
                                           ),

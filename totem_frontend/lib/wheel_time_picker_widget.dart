@@ -43,6 +43,10 @@ class _TimePickerTextFieldState extends State<TimePickerTextField> {
 
     int differenceMinutes = pickedMinutes - currentMinutes;
 
+    if (differenceMinutes < 0) {
+      differenceMinutes += 24 * 60;
+    }
+
     return Duration(minutes: differenceMinutes);
   }
 
@@ -54,7 +58,7 @@ class _TimePickerTextFieldState extends State<TimePickerTextField> {
 
   double _convertDurationToHours(Duration duration) {
     double hours = duration.inMinutes / 60;
-    String oneDigitHours = hours.toStringAsFixed(1);
+    String oneDigitHours = hours.toStringAsFixed(2);
     return double.parse(oneDigitHours);
   }
 
@@ -158,7 +162,6 @@ class _TimePickerTextFieldState extends State<TimePickerTextField> {
                   ),
                   child: CupertinoTimerPicker(
                     mode: CupertinoTimerPickerMode.hm,
-                    minuteInterval: 1,
                     initialTimerDuration:
                         selectedTime ?? _currentTimeAsDuration,
                     onTimerDurationChanged: (Duration newTime) {
