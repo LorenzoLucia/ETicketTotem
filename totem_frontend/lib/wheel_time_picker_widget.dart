@@ -1,0 +1,287 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+
+class TimePickerTextField extends StatefulWidget {
+  final Function(double)? onTimeChanged;
+  final Duration? initialTime;
+
+  const TimePickerTextField({Key? key, this.onTimeChanged, this.initialTime})
+    : super(key: key);
+
+  @override
+  State<TimePickerTextField> createState() => _TimePickerTextFieldState();
+}
+
+class _TimePickerTextFieldState extends State<TimePickerTextField> {
+  Duration? selectedTime;
+  final TextEditingController _controller = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    selectedTime = widget.initialTime;
+    _updateTextField();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  Duration get _currentTimeAsDuration {
+    DateTime now = DateTime.now();
+    return Duration(hours: now.hour, minutes: now.minute);
+  }
+
+  Duration _calculateDifference(Duration pickedTime) {
+    Duration currentTime = _currentTimeAsDuration;
+
+    // Converti entrambe le duration in minuti per facilitare il calcolo
+    int pickedMinutes = pickedTime.inMinutes;
+    int currentMinutes = currentTime.inMinutes;
+
+    int differenceMinutes = pickedMinutes - currentMinutes;
+
+    return Duration(minutes: differenceMinutes);
+  }
+
+  String _formatTime(Duration duration) {
+    int hours = duration.inHours;
+    int minutes = duration.inMinutes.remainder(60);
+    return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}';
+  }
+
+  double _convertDurationToHours(Duration duration) {
+    double hours = duration.inMinutes / 60;
+    String oneDigitHours = hours.toStringAsFixed(1);
+    return double.parse(oneDigitHours);
+  }
+
+  void _updateTextField() {
+    if (selectedTime != null) {
+      Duration difference = _calculateDifference(selectedTime!);
+      _convertDurationToHours(difference);
+
+      _controller.text = _formatTime(selectedTime!);
+    } else {
+      _controller.clear();
+    }
+  }
+
+  void _showTimePicker() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext context) {
+        return Container(
+          height: MediaQuery.of(context).size.height * 0.6,
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
+          ),
+          child: Column(
+            children: [
+              // Handle bar
+              Container(
+                margin: const EdgeInsets.only(top: 12),
+                width: 50,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+
+              // Header
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text(
+                        'Cancel',
+                        style: TextStyle(color: Colors.red, fontSize: 18),
+                      ),
+                    ),
+                    const Text(
+                      'Select End Time',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        setState(() {
+                          _updateTextField();
+                        });
+                        if (widget.onTimeChanged != null &&
+                            selectedTime != null) {
+                          widget.onTimeChanged!(
+                            _convertDurationToHours(
+                              _calculateDifference(selectedTime!),
+                            ),
+                          );
+                        }
+                        Navigator.pop(context);
+                      },
+                      child: const Text(
+                        'Confirm',
+                        style: TextStyle(
+                          color: Colors.deepPurple,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Time Picker
+              Expanded(
+                child: Container(
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 15,
+                    vertical: 15,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade50,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: CupertinoTimerPicker(
+                    mode: CupertinoTimerPickerMode.hm,
+                    minuteInterval: 1,
+                    initialTimerDuration:
+                        selectedTime ?? _currentTimeAsDuration,
+                    onTimerDurationChanged: (Duration newTime) {
+                      selectedTime = newTime;
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      controller: _controller,
+      readOnly: true,
+      onTap: _showTimePicker,
+      textAlign: TextAlign.left,
+      style: const TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
+        letterSpacing: 1.5,
+      ),
+      decoration: InputDecoration(
+        suffixIcon: const Icon(Icons.keyboard_arrow_down),
+        border: OutlineInputBorder(),
+        contentPadding: EdgeInsets.all(7),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: Colors.deepPurple, width: 2),
+        ),
+      ),
+    );
+  }
+}
+
+// Esempio di utilizzo
+// class TimePickerExample extends StatefulWidget {
+//   @override
+//   _TimePickerExampleState createState() => _TimePickerExampleState();
+// }
+
+// class _TimePickerExampleState extends State<TimePickerExample> {
+//   Duration? selectedDifference;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: const Text('Time Picker TextField'),
+//         backgroundColor: Colors.blue,
+//       ),
+//       body: Padding(
+//         padding: const EdgeInsets.all(20.0),
+//         child: Column(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             const Text(
+//               'Seleziona un orario:',
+//               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+//             ),
+//             const SizedBox(height: 16),
+
+//             TimePickerTextField(
+//               labelText: 'Orario Appuntamento',
+//               hintText: 'Tocca per selezionare l\'orario',
+//               initialTime: Duration(
+//                 hours: DateTime.now().hour + 1,
+//                 minutes: DateTime.now().minute,
+//               ),
+//               onTimeChanged: (Duration difference) {
+//                 setState(() {
+//                   selectedDifference = difference;
+//                 });
+//                 print('Differenza selezionata: $difference');
+//               },
+//             ),
+
+//             const SizedBox(height: 20),
+
+//             if (selectedDifference != null)
+//               Card(
+//                 child: Padding(
+//                   padding: const EdgeInsets.all(16),
+//                   child: Column(
+//                     crossAxisAlignment: CrossAxisAlignment.start,
+//                     children: [
+//                       const Text(
+//                         'Risultato:',
+//                         style: TextStyle(
+//                           fontSize: 16,
+//                           fontWeight: FontWeight.bold,
+//                         ),
+//                       ),
+//                       const SizedBox(height: 8),
+//                       Text(
+//                         'Differenza: ${selectedDifference!.isNegative ? "-" : "+"}${selectedDifference!.abs().inHours}h ${selectedDifference!.abs().inMinutes.remainder(60)}min',
+//                         style: TextStyle(
+//                           fontSize: 14,
+//                           color:
+//                               selectedDifference!.isNegative
+//                                   ? Colors.red
+//                                   : Colors.green,
+//                         ),
+//                       ),
+//                       Text(
+//                         'Duration: $selectedDifference',
+//                         style: const TextStyle(
+//                           fontSize: 12,
+//                           color: Colors.grey,
+//                         ),
+//                       ),
+//                     ],
+//                   ),
+//                 ),
+//               ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
