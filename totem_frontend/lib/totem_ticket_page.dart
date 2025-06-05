@@ -277,7 +277,8 @@ class _LicensePlateInputScreenState extends State<LicensePlateInputScreen> {
                                       builder:
                                           (context) => ManOrNfcScreen(
                                             amount: tikcetPrice,
-                                            duration: (parkingTime * 2).toInt(),
+                                            duration:
+                                                (parkingTime * 60).toInt(),
                                             zone: zone!,
                                             plate: plate!,
                                             apiService: widget.apiService,
@@ -294,7 +295,10 @@ class _LicensePlateInputScreenState extends State<LicensePlateInputScreen> {
                         ),
                         child: const Text(
                           'Conferma',
-                          style: TextStyle(fontSize: 18),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                          ),
                         ),
                       ),
                     ],
