@@ -5,7 +5,7 @@ import 'package:totem_frontend/services/api_service.dart';
 
 class ManOrNfcScreen extends StatelessWidget {
   final double amount;
-  final int duration;
+  final double duration;
   final String zone;
   final String? id;
   final String? plate;

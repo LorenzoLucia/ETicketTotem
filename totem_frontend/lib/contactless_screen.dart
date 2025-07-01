@@ -5,13 +5,12 @@ import 'package:web_socket_channel/status.dart' as status;
 import 'dart:convert';
 import 'dart:async';
 import 'package:totem_frontend/services/api_service.dart';
-import 'package:totem_frontend/stripe_service.dart';
 
 enum PaymentStatus { waiting, processing, success, failed }
 
 class ContactlessScreen extends StatefulWidget {
   final double amount;
-  final int duration;
+  final double duration;
   final String zone;
   final String? id;
   final String? plate;
@@ -118,8 +117,8 @@ class _ContactlessScreenState extends State<ContactlessScreen>
           _paymentStatus = PaymentStatus.processing;
         });
 
-        // Processa il pagamento con Stripe
-        _processStripePayment(rfidData['card_data']);
+        // Processa il pagamento
+        _processPayment();
       } else if (rfidData['status'] == 'error') {
         setState(() {
           _paymentStatus = PaymentStatus.failed;
@@ -135,7 +134,7 @@ class _ContactlessScreenState extends State<ContactlessScreen>
     }
   }
 
-  Future<void> _processStripePayment(Map<String, dynamic> cardData) async {
+  Future<void> _processPayment() async {
     return;
     // try {
     //   // Chiamata API per processare il pagamento con Stripe
@@ -404,10 +403,10 @@ class _ContactlessScreenState extends State<ContactlessScreen>
             // Icona stato pagamento
             // _buildStatusIcon(),
 
-            // Payment butto
+            // Payment button
             ElevatedButton(
               onPressed: () {
-                StripeService.instance.makePayment(widget.amount);
+                _processPayment();
               },
               child: Text("Purchase"),
             ),

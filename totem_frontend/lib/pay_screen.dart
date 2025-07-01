@@ -22,7 +22,7 @@ import 'package:totem_frontend/services/api_service.dart';
 
 class PayScreen extends StatefulWidget {
   final double amount;
-  final int duration;
+  final double duration;
   final String zone;
   final String? id;
   final String? plate;
@@ -123,7 +123,7 @@ class _PayScreenState extends State<PayScreen> {
 
 class NewPaymentMethodPage extends StatelessWidget {
   final double amount;
-  final int duration;
+  final double duration;
   final String zone;
   final String? id;
   final String? plate;
@@ -280,7 +280,7 @@ class PaymentMethodsPage extends StatelessWidget {
   final Function(Map<String, String>) onPaymentMethodSelected;
 
   final double amount;
-  final int duration;
+  final double duration;
   final String zone;
   final String? id;
   final String? plate;

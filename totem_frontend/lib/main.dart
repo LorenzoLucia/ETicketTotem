@@ -1,5 +1,7 @@
 // import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:totem_frontend/consts.dart';
 // import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'app.dart';
@@ -12,6 +14,7 @@ void main() async {
   try {
     // await dotenv.load(fileName: "assets/.env"); // Debug print statement
     // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+    await _setupStripe();
     runApp(MyApp());
   } catch (e) {
     runApp(
@@ -20,4 +23,8 @@ void main() async {
       ),
     );
   }
+}
+
+Future<void> _setupStripe() async {
+  Stripe.publishableKey = stripePublicKey;
 }

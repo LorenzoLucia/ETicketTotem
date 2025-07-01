@@ -40,8 +40,10 @@ dependencies:
   web_socket_channel: ^3.0.2
   firebase_auth: ^5.5.4
   flutter_stripe: ^11.5.0
+  flutter_stripe_web: ^6.5.1
+  web: ^1.0.0
 
-dev_dependencies:
+dev_dependencies: 
   flutter_test:
     sdk: flutter
 

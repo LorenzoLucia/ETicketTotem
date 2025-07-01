@@ -28,7 +28,7 @@ class _LicensePlateInputScreenState extends State<LicensePlateInputScreen> {
 
   String? plate;
   String? zone;
-  double parkingTime = 0; // Default to 1 hour
+  double parkingTime = 0; // Default to 0
   double tikcetPrice = 0.0;
 
   // Fixed zone and price
@@ -277,8 +277,7 @@ class _LicensePlateInputScreenState extends State<LicensePlateInputScreen> {
                                       builder:
                                           (context) => ManOrNfcScreen(
                                             amount: tikcetPrice,
-                                            duration:
-                                                (parkingTime * 60).toInt(),
+                                            duration: parkingTime,
                                             zone: zone!,
                                             plate: plate!,
                                             apiService: widget.apiService,
