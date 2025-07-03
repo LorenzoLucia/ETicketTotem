@@ -75,6 +75,14 @@ class _ContactlessScreenState extends State<ContactlessScreen>
     super.dispose();
   }
 
+  String _hourAndMinuts(double parkingTime) {
+    int parkingMinutes = (parkingTime * 60).toInt();
+    String hours = (parkingTime.toInt()).toString().padLeft(2, '0');
+    String minutes = (parkingMinutes % 60).toString().padLeft(2, '0');
+
+    return '$hours:$minutes h';
+  }
+
   void _connectToRFIDReader() {
     try {
       _channel = WebSocketChannel.connect(Uri.parse('ws://localhost:9001'));
@@ -87,7 +95,7 @@ class _ContactlessScreenState extends State<ContactlessScreen>
           print('WebSocket Error: $error');
           setState(() {
             _paymentStatus = PaymentStatus.failed;
-            _errorMessage = 'Errore connessione lettore RFID';
+            _errorMessage = 'Failed to connect to RFID reader';
           });
         },
         onDone: () {
@@ -103,7 +111,7 @@ class _ContactlessScreenState extends State<ContactlessScreen>
       print('Failed to connect to RFID reader: $e');
       setState(() {
         _paymentStatus = PaymentStatus.failed;
-        _errorMessage = 'Impossibile connettersi al lettore';
+        _errorMessage = 'Failed to connect to RFID reader';
       });
     }
   }
@@ -122,14 +130,14 @@ class _ContactlessScreenState extends State<ContactlessScreen>
       } else if (rfidData['status'] == 'error') {
         setState(() {
           _paymentStatus = PaymentStatus.failed;
-          _errorMessage = rfidData['message'] ?? 'Errore lettura carta';
+          _errorMessage = rfidData['message'] ?? 'Error reading card';
         });
       }
     } catch (e) {
       print('Error parsing RFID data: $e');
       setState(() {
         _paymentStatus = PaymentStatus.failed;
-        _errorMessage = 'Errore dati carta';
+        _errorMessage = 'Error reading card details';
       });
     }
   }
@@ -190,7 +198,7 @@ class _ContactlessScreenState extends State<ContactlessScreen>
   void _handlePaymentTimeout() {
     setState(() {
       _paymentStatus = PaymentStatus.failed;
-      _errorMessage = 'Timeout: operazione scaduta';
+      _errorMessage = 'Timeout error';
     });
   }
 
@@ -202,7 +210,7 @@ class _ContactlessScreenState extends State<ContactlessScreen>
             Icon(Icons.check_circle, color: Colors.white),
             SizedBox(width: 12),
             Text(
-              'Pagamento riuscito!',
+              'Payment Successful!',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
           ],
@@ -300,13 +308,13 @@ class _ContactlessScreenState extends State<ContactlessScreen>
   String _getStatusMessage() {
     switch (_paymentStatus) {
       case PaymentStatus.waiting:
-        return 'Avvicina la carta al lettore';
+        return 'Please hold the credit card near the reader';
       case PaymentStatus.processing:
-        return 'Processando il pagamento...';
+        return 'Processing payment...';
       case PaymentStatus.success:
-        return 'Pagamento completato!';
+        return 'Payment Successful!';
       case PaymentStatus.failed:
-        return _errorMessage ?? 'Pagamento fallito';
+        return _errorMessage ?? 'Payment Failed. Please try again.';
     }
   }
 
@@ -327,8 +335,8 @@ class _ContactlessScreenState extends State<ContactlessScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Pagamento Contactless'),
-        backgroundColor: Colors.blue,
+        title: const Text('Contactless payment'),
+        backgroundColor: Colors.deepPurple,
         foregroundColor: Colors.white,
         automaticallyImplyLeading: _paymentStatus != PaymentStatus.processing,
       ),
@@ -347,7 +355,10 @@ class _ContactlessScreenState extends State<ContactlessScreen>
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text('Importo:', style: TextStyle(fontSize: 18)),
+                        const Text(
+                          'Amount to Pay:',
+                          style: TextStyle(fontSize: 18),
+                        ),
                         Text(
                           '€ ${widget.amount.toStringAsFixed(2)}',
                           style: const TextStyle(
@@ -362,10 +373,13 @@ class _ContactlessScreenState extends State<ContactlessScreen>
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text('Durata:', style: TextStyle(fontSize: 16)),
+                        const Text('Duration:', style: TextStyle(fontSize: 16)),
                         Text(
-                          '${widget.duration} minuti',
-                          style: const TextStyle(fontSize: 16),
+                          _hourAndMinuts(widget.duration),
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ],
                     ),
@@ -373,8 +387,14 @@ class _ContactlessScreenState extends State<ContactlessScreen>
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text('Zona:', style: TextStyle(fontSize: 16)),
-                        Text(widget.zone, style: const TextStyle(fontSize: 16)),
+                        const Text('Zone:', style: TextStyle(fontSize: 16)),
+                        Text(
+                          widget.zone,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ],
                     ),
                     if (widget.plate != null) ...[
@@ -382,7 +402,7 @@ class _ContactlessScreenState extends State<ContactlessScreen>
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text('Targa:', style: TextStyle(fontSize: 16)),
+                          const Text('Plate:', style: TextStyle(fontSize: 16)),
                           Text(
                             widget.plate!,
                             style: const TextStyle(
@@ -398,7 +418,7 @@ class _ContactlessScreenState extends State<ContactlessScreen>
               ),
             ),
 
-            const SizedBox(height: 40),
+            const SizedBox(height: 20),
 
             // Icona stato pagamento
             // _buildStatusIcon(),
@@ -408,7 +428,7 @@ class _ContactlessScreenState extends State<ContactlessScreen>
               onPressed: () {
                 _processPayment();
               },
-              child: Text("Purchase"),
+              child: Text("Proceed To Payment"),
             ),
 
             const SizedBox(height: 24),
@@ -417,19 +437,19 @@ class _ContactlessScreenState extends State<ContactlessScreen>
             Text(
               _getStatusMessage(),
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 18,
                 fontWeight: FontWeight.w600,
                 color: _getStatusColor(),
               ),
               textAlign: TextAlign.center,
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 10),
 
             // Istruzioni aggiuntive
             if (_paymentStatus == PaymentStatus.waiting)
               const Text(
-                'Posiziona la carta o il dispositivo vicino al simbolo contactless',
+                'Please hold the credit card near the reader',
                 style: TextStyle(fontSize: 16, color: Colors.grey),
                 textAlign: TextAlign.center,
               ),
@@ -443,9 +463,12 @@ class _ContactlessScreenState extends State<ContactlessScreen>
                 child: ElevatedButton.icon(
                   onPressed: _retryPayment,
                   icon: const Icon(Icons.refresh),
-                  label: const Text('Riprova', style: TextStyle(fontSize: 16)),
+                  label: const Text(
+                    'Try Again',
+                    style: TextStyle(fontSize: 16),
+                  ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
+                    backgroundColor: Colors.deepPurple,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
@@ -454,7 +477,7 @@ class _ContactlessScreenState extends State<ContactlessScreen>
                   ),
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 15),
             ],
 
             if (_paymentStatus != PaymentStatus.processing)
@@ -470,8 +493,8 @@ class _ContactlessScreenState extends State<ContactlessScreen>
                   ),
                   child: Text(
                     _paymentStatus == PaymentStatus.success
-                        ? 'Chiudi'
-                        : 'Annulla',
+                        ? 'Close'
+                        : 'Cancel',
                     style: const TextStyle(fontSize: 16),
                   ),
                 ),

@@ -2,65 +2,75 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:totem_frontend/man_or_nfc_screen.dart';
+import 'package:totem_frontend/contactless_screen.dart';
 import 'package:totem_frontend/services/api_service.dart';
 import 'package:totem_frontend/wheel_time_picker_widget.dart';
 
-class LicensePlateInputScreen extends StatefulWidget {
+class TotemInputScreen extends StatefulWidget {
   final ApiService apiService;
-  const LicensePlateInputScreen({super.key, required this.apiService});
+  const TotemInputScreen({super.key, required this.apiService});
 
   @override
-  State<LicensePlateInputScreen> createState() =>
-      _LicensePlateInputScreenState();
+  State<TotemInputScreen> createState() => _TotemInputScreenState();
 }
 
-class _LicensePlateInputScreenState extends State<LicensePlateInputScreen> {
+class _TotemInputScreenState extends State<TotemInputScreen> {
   // ignore: unused_field
   static const double fontSizeRegular = 16;
   static const double fontSizeLarge = 18;
   static const double containerHeight = 40;
   static const double paddingSize = 7;
   final TextEditingController plateController = TextEditingController();
-  final TextEditingController zoneController = TextEditingController();
 
   DateTime now = DateTime.now();
 
   String? plate;
-  String? zone;
+  String? selectedZone;
+  Map<String, double> zonePrices = {};
   double parkingTime = 0; // Default to 0
   double tikcetPrice = 0.0;
-
-  // Fixed zone and price
-  final double fixedZonePrice = 2.0;
 
   @override
   void initState() {
     super.initState();
-
+    loadPrices();
     // Start listening to changes.
     plateController.addListener(_saveTextValues);
-    zoneController.addListener(_saveTextValues);
   }
 
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
-    zoneController.dispose();
     plateController.dispose();
     super.dispose();
   }
 
+  Future<void> loadPrices() async {
+    try {
+      final prices = await widget.apiService.fetchZonePrices();
+      print('Zone prices loaded: $prices');
+      setState(() {
+        zonePrices = prices;
+      });
+    } catch (e) {
+      // Handle error
+      print('Error loading zones: $e');
+    }
+  }
+
   void calculatePrice() {
-    tikcetPrice = double.parse(
-      (fixedZonePrice * parkingTime).toStringAsFixed(1),
-    );
+    if (selectedZone != null) {
+      setState(() {
+        tikcetPrice = double.parse(
+          (zonePrices[selectedZone]! * parkingTime).toStringAsFixed(1),
+        );
+      });
+    }
   }
 
   void _saveTextValues() {
     setState(() {
       plateController.text == '' ? plate = null : plate = plateController.text;
-      zoneController.text == '' ? zone = null : zone = zoneController.text;
     });
   }
 
@@ -68,7 +78,7 @@ class _LicensePlateInputScreenState extends State<LicensePlateInputScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Insert Ticket Data'),
+        title: const Text('Select Ticket Details'),
         centerTitle: true,
       ),
       body: GestureDetector(
@@ -95,7 +105,7 @@ class _LicensePlateInputScreenState extends State<LicensePlateInputScreen> {
                             child: Padding(
                               padding: EdgeInsets.all(paddingSize),
                               child: Text(
-                                'Plate',
+                                'Enter Plate',
                                 style: const TextStyle(
                                   fontSize: fontSizeLarge,
                                   fontWeight: FontWeight.bold,
@@ -128,15 +138,6 @@ class _LicensePlateInputScreenState extends State<LicensePlateInputScreen> {
                                 hintText: 'Insert Plate',
                                 hintStyle: TextStyle(color: Colors.grey),
                               ),
-                              // onTapOutside: (event) {
-                              //   FocusManager.instance.primaryFocus?.unfocus();
-                              //   plate = plateController.text;
-                              //   // print('onTapOutside');
-                              //   // print(plate);
-                              // },
-                              // onEditingComplete: () {
-                              //   plate = plateController.text;
-                              // },
                             ),
                           ),
                         ],
@@ -144,7 +145,7 @@ class _LicensePlateInputScreenState extends State<LicensePlateInputScreen> {
 
                       Spacer(),
 
-                      // Testo Zona
+                      // Zone
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -158,7 +159,7 @@ class _LicensePlateInputScreenState extends State<LicensePlateInputScreen> {
                             child: Padding(
                               padding: EdgeInsets.all(paddingSize),
                               child: Text(
-                                'Zone',
+                                'Select Zone',
                                 style: const TextStyle(
                                   fontSize: fontSizeLarge,
                                   fontWeight: FontWeight.bold,
@@ -177,34 +178,51 @@ class _LicensePlateInputScreenState extends State<LicensePlateInputScreen> {
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            child: TextField(
-                              controller: zoneController,
-                              textAlign: TextAlign.left,
+                            child: DropdownButton<String>(
+                              padding: EdgeInsets.only(left: paddingSize),
+                              value: selectedZone,
                               style: const TextStyle(
                                 fontSize: fontSizeLarge,
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: 1.5,
                               ),
-                              decoration: const InputDecoration(
-                                border: OutlineInputBorder(),
-                                contentPadding: EdgeInsets.all(paddingSize),
-                                hintText: 'Insert Zone',
-                                hintStyle: TextStyle(color: Colors.grey),
-                              ),
-                              // onTapOutside: (event) {
-                              //   FocusManager.instance.primaryFocus?.unfocus();
-                              //   zone = zoneController.text;
-                              //   // print('onTapOutside');
-                              //   // print(zone);
-                              // },
+                              hint: Text('Zone'),
+                              items:
+                                  zonePrices.keys.map((zone) {
+                                    return DropdownMenuItem<String>(
+                                      value: zone,
+                                      child: Text(zone),
+                                    );
+                                  }).toList(),
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedZone = value;
+                                  calculatePrice();
+                                });
+                              },
                             ),
+                            // TextField(
+                            //   controller: zoneController,
+                            //   textAlign: TextAlign.left,
+                            //   style: const TextStyle(
+                            //     fontSize: fontSizeLarge,
+                            //     fontWeight: FontWeight.bold,
+                            //     letterSpacing: 1.5,
+                            //   ),
+                            //   decoration: const InputDecoration(
+                            //     border: OutlineInputBorder(),
+                            //     contentPadding: EdgeInsets.all(paddingSize),
+                            //     hintText: 'Zone',
+                            //     hintStyle: TextStyle(color: Colors.grey),
+                            //   ),
+                            // ),
                           ),
                         ],
                       ),
 
                       Spacer(),
 
-                      // Testo Tempo
+                      // Parking Time
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -218,7 +236,7 @@ class _LicensePlateInputScreenState extends State<LicensePlateInputScreen> {
                             child: Padding(
                               padding: EdgeInsets.all(paddingSize),
                               child: Text(
-                                'End Time',
+                                'Select End Time',
                                 style: const TextStyle(
                                   fontSize: fontSizeLarge,
                                   fontWeight: FontWeight.bold,
@@ -269,16 +287,18 @@ class _LicensePlateInputScreenState extends State<LicensePlateInputScreen> {
                       // Pulsante di conferma
                       ElevatedButton(
                         onPressed:
-                            plate != null && zone != null && parkingTime != 0
+                            plate != null &&
+                                    selectedZone != null &&
+                                    parkingTime != 0
                                 ? () {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                       builder:
-                                          (context) => ManOrNfcScreen(
+                                          (context) => ContactlessScreen(
                                             amount: tikcetPrice,
                                             duration: parkingTime,
-                                            zone: zone!,
+                                            zone: selectedZone!,
                                             plate: plate!,
                                             apiService: widget.apiService,
                                           ),
@@ -293,7 +313,7 @@ class _LicensePlateInputScreenState extends State<LicensePlateInputScreen> {
                           ),
                         ),
                         child: const Text(
-                          'Conferma',
+                          'Proceed To Payment',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 20,
