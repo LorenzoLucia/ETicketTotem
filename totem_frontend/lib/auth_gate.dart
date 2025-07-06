@@ -130,20 +130,6 @@ class AuthGate extends StatelessWidget {
                 uid: data["user_id"],
               );
             }
-
-            // if (user.metadata.creationTime == user.metadata.lastSignInTime) {
-            //   // User just registered
-            //   return RegistrationPage(
-            //     apiService: apiService,
-            //     userData: data["user_data"],
-            //   );
-            // } else {
-            //   // User logged in
-            //   return HomeScreen(
-            //     apiService: apiService,
-            //     userData: data["user_data"],
-            //   );
-            // }
           },
         );
       },

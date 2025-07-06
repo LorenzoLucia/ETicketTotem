@@ -28,17 +28,20 @@ class HomeScreen extends StatelessWidget {
       case 'CONTROLLER':
         homePage = ParkingControllerPage(apiService: apiService);
         break;
-      case 'TOTEM':
+      case 'CUSTOMER':
         homePage = TotemInputScreen(apiService: apiService);
       default:
-        homePage = ErrorPage(apiService: apiService, userData: userData);
-        break;
+        return SnackBar(
+          content: Text(
+            'Error: Trying to login with role: ${userData['role']}',
+          ),
+        );
     }
 
     return ChangeNotifierProvider(
       create: (context) => MyAppState(),
       child: MaterialApp(
-        title: 'eTickets App',
+        title: 'eTickets Totem',
         theme: ThemeData(
           useMaterial3: true,
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
@@ -68,30 +71,37 @@ class MyAppState extends ChangeNotifier {
   }
 }
 
-class ErrorPage extends StatelessWidget {
-  final ApiService apiService;
-  final Map<String, dynamic> userData;
+// class ErrorPage extends StatelessWidget {
+//   final ApiService apiService;
+//   final Map<String, dynamic> userData;
 
-  const ErrorPage({
-    super.key,
-    required this.apiService,
-    required this.userData,
-  });
+//   const ErrorPage({
+//     super.key,
+//     required this.apiService,
+//     required this.userData,
+//   });
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Error Page')),
-      body: Center(
-        child: Text(
-          'Error: Trying to login on a totem with role: ${userData['role']}',
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Colors.red,
-          ),
-        ),
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(title: Text('Error Page'),
+//       ),
+//       body: Center(
+//         child: 
+//         Column(mainAxisAlignment: MainAxisAlignment.center,
+//         children: [
+//         Text(
+//           'Error: Trying to login with role: ${userData['role']}',
+//           style: const TextStyle(
+//             fontSize: 18,
+//             fontWeight: FontWeight.bold,
+//             color: Colors.red,
+//           ),
+//         ),
+        
+//         ]
+//       ),
+//       ),
+//     );
+//   }
+// }

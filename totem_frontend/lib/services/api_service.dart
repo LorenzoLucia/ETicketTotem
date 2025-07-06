@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class ApiService {
   final String baseUrl;
@@ -246,7 +247,12 @@ class ApiService {
     }
   }
 
-  Future<bool> addUser(String email, String name, String surname, String role) async {
+  Future<bool> addUser(
+    String email,
+    String name,
+    String surname,
+    String role,
+  ) async {
     final body = jsonEncode({
       // 'username': username,
       'name': name,
@@ -290,16 +296,9 @@ class ApiService {
     }
   }
 
-  Future<bool> modifyUser(
-    String uid,
-    String new_email,
-    String new_role,
-  ) async {
+  Future<bool> modifyUser(String uid, String new_email, String new_role) async {
     final url = Uri.parse('$baseUrl/users/$uid');
-    final body = jsonEncode({
-      'email': new_email,
-      'role': new_role,
-    });
+    final body = jsonEncode({'email': new_email, 'role': new_role});
 
     try {
       final response = await http.put(
@@ -475,6 +474,46 @@ class ApiService {
   ) async {
     final tokenId = await getTokenId();
     final url = Uri.parse('$baseUrl/users/$user_id/pay');
+    try {
+      print(
+        jsonEncode({
+          'payment_method_id': methodId,
+          'amount': amount,
+          'duration': duration,
+          'zone': zone,
+          'ticket_id': id!,
+          'plate': plate,
+        }),
+      );
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json', 'auth': (tokenId ?? '')},
+        body: jsonEncode({
+          'payment_method_id': methodId,
+          'amount': amount,
+          'duration': duration,
+          'zone': zone,
+          'ticket_id': id!,
+          'plate': plate,
+        }),
+      );
+
+      return response.statusCode == 200;
+    } catch (e) {
+      throw Exception('Error paying ticket: $e');
+    }
+  }
+
+  Future<bool> payTicketTotem(
+    String plate,
+    String methodId,
+    String amount,
+    String duration,
+    String zone,
+    String? id,
+  ) async {
+    final tokenId = await getTokenId();
+    final url = Uri.parse('$baseUrl/users/$user_id/pay_totem');
     try {
       print(
         jsonEncode({
