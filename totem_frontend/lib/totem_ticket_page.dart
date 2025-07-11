@@ -27,7 +27,8 @@ class _TotemInputScreenState extends State<TotemInputScreen> {
   String? plate;
   String? selectedZone;
   Map<String, double> zonePrices = {};
-  double parkingTime = 0; // Default to 0
+  int parkingTimeHours = 1; // Default to 1 hour parking time
+  int parkingTimeMinutes = 0; // Default to 0 minutes
   double tikcetPrice = 0.0;
 
   @override
@@ -62,7 +63,9 @@ class _TotemInputScreenState extends State<TotemInputScreen> {
     if (selectedZone != null) {
       setState(() {
         tikcetPrice = double.parse(
-          (zonePrices[selectedZone]! * parkingTime).toStringAsFixed(1),
+          (zonePrices[selectedZone]! *
+                  (parkingTimeHours + parkingTimeMinutes / 60))
+              .toStringAsFixed(1),
         );
       });
     }
@@ -72,6 +75,34 @@ class _TotemInputScreenState extends State<TotemInputScreen> {
     setState(() {
       plateController.text == '' ? plate = null : plate = plateController.text;
     });
+  }
+
+  String calculateTicketEndTime() {
+    DateTime now = DateTime.now();
+    DateTime date = now.add(
+      Duration(hours: parkingTimeHours, minutes: parkingTimeMinutes),
+    );
+    Map<int, String> months = {
+      1: "January",
+      2: "February",
+      3: "March",
+      4: "April",
+      5: "May",
+      6: "June",
+      7: "July",
+      8: "August",
+      9: "September",
+      10: "October",
+      11: "November",
+      12: "December",
+    };
+
+    String month = months[date.month]!;
+    int day = date.day;
+    int hour = date.hour;
+    int minutes = date.minute;
+
+    return '$day of $month at ${hour.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}';
   }
 
   @override
@@ -260,9 +291,12 @@ class _TotemInputScreenState extends State<TotemInputScreen> {
                                 hours: now.hour,
                                 minutes: now.minute,
                               ),
-                              onTimeChanged: (double value) {
+                              onTimeChanged: (Duration value) {
                                 setState(() {
-                                  parkingTime = value;
+                                  parkingTimeHours = value.inHours;
+                                  parkingTimeHours = value.inMinutes.remainder(
+                                    60,
+                                  );
                                 });
                                 calculatePrice();
                               },
@@ -271,6 +305,55 @@ class _TotemInputScreenState extends State<TotemInputScreen> {
                         ],
                       ),
 
+                      Spacer(),
+
+                      // Parking Time
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            width: 200,
+                            height: containerHeight,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.all(paddingSize),
+                              child: Text(
+                                'Ticket Expiration Date',
+                                style: const TextStyle(
+                                  fontSize: fontSizeLarge,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 1.5,
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          SizedBox(width: 20),
+
+                          Container(
+                            width: 200,
+                            height: containerHeight,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.all(paddingSize),
+                              child: Text(
+                                calculateTicketEndTime(),
+                                style: const TextStyle(
+                                  fontSize: fontSizeLarge,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 1.5,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                       Spacer(),
 
                       // Testo Prezzo
@@ -289,7 +372,9 @@ class _TotemInputScreenState extends State<TotemInputScreen> {
                         onPressed:
                             plate != null &&
                                     selectedZone != null &&
-                                    parkingTime != 0
+                                    (parkingTimeHours +
+                                            parkingTimeMinutes / 60) !=
+                                        0
                                 ? () {
                                   Navigator.push(
                                     context,
@@ -297,7 +382,9 @@ class _TotemInputScreenState extends State<TotemInputScreen> {
                                       builder:
                                           (context) => ContactlessScreen(
                                             amount: tikcetPrice,
-                                            duration: parkingTime,
+                                            duration:
+                                                parkingTimeHours +
+                                                parkingTimeMinutes / 60,
                                             zone: selectedZone!,
                                             plate: plate!,
                                             apiService: widget.apiService,
