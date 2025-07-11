@@ -110,6 +110,7 @@ class _TimePickerTextFieldState extends State<TimePickerTextField> {
   }
 
   void _showTimePicker() {
+    isDurationValid = true;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
