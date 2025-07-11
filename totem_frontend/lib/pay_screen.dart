@@ -57,22 +57,22 @@ class _PayScreenState extends State<PayScreen> {
 
   Future<bool> hasRegisteredPaymentMethods() async {
     return true; // For debug purposes, always return true
-    try {
-      final methods = await widget.apiService.hasRegisteredPaymentMethods();
-      if (methods) {
-        // Fetch the registered payment methods from the server
-        final response = await widget.apiService.fetchPaymentMethods();
-        setState(() {
-          paymentMethods = List<Map<String, String>>.from(response);
-        });
-      }
-      return methods;
-    } catch (e) {
-      // Handle error
-      print('Error loading plates: $e');
-    }
+    // try {
+    //   final methods = await widget.apiService.hasRegisteredPaymentMethods();
+    //   if (methods) {
+    //     // Fetch the registered payment methods from the server
+    //     final response = await widget.apiService.fetchPaymentMethods();
+    //     setState(() {
+    //       paymentMethods = List<Map<String, String>>.from(response);
+    //     });
+    //   }
+    //   return methods;
+    // } catch (e) {
+    //   // Handle error
+    //   print('Error loading plates: $e');
+    // }
 
-    return false;
+    // return false;
   }
 
   @override
