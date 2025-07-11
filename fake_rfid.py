@@ -1,17 +1,20 @@
 import asyncio
-import websockets
+from websockets.asyncio.server import serve
 
 async def publish_numbers(websocket):
-    number = 1234567890  # Starting number
-    input("Press Enter to start sending numbers...")
-    await websocket.send(str(number))
-    print(f"Sent: {number}")
+    n = input("Press 1 to send 'CARTA VALIDA' and 2 to send 'CARTA NON VALIDA'")
+    if n == 1:
+        msg = "CARTA VALIDA"
+    elif n == 2:
+        msg = "CARTA NON VALIDA"
+    else:
+        msg = "ERROR"
 
-        # number += 1
-        # await asyncio.sleep(1)
+    await websocket.send(msg)
+    print(f"Sent: {msg}")
 
 async def main():
-    async with websockets.serve(lambda ws: publish_numbers(ws), "localhost", 9001):
-        await asyncio.Future()  # Run forever
+    async with serve(publish_numbers, "", 9001) as server:
+        await server.serve_forever()  # Run forever
 
 asyncio.run(main())

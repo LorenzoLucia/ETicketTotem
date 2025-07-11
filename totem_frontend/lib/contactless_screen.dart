@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:web_socket_channel/web_socket_channel.dart';
@@ -40,6 +42,7 @@ class _ContactlessScreenState extends State<ContactlessScreen>
   late Animation<double> _pulseAnimation;
   Timer? _timeoutTimer;
   String? _errorMessage;
+  String? ticketId;
 
   @override
   void initState() {
@@ -59,7 +62,7 @@ class _ContactlessScreenState extends State<ContactlessScreen>
     _readCardRFID();
 
     // Timeout Timer
-    _timeoutTimer = Timer(const Duration(minutes: 5), () {
+    _timeoutTimer = Timer(const Duration(minutes: 1), () {
       if (_paymentStatus == PaymentStatus.waiting ||
           _paymentStatus == PaymentStatus.processing) {
         _handlePaymentTimeout();
@@ -91,15 +94,23 @@ class _ContactlessScreenState extends State<ContactlessScreen>
 
       channelWS.stream.listen(
         (rfidData) {
-          if (rfidData == 'CARTA VALIDA') {
+          rfidData = rfidData.toString();
+          print(rfidData);
+          if (rfidData.contains("CARTA VALIDA")) {
             setState(() {
               _paymentStatus = PaymentStatus.processing;
             });
+            print("Processo il pagamento");
             _processPayment();
-          } else if (rfidData == 'CARTA NON VALIDA') {
+          } else if (rfidData.contains("CARTA NON VALIDA")) {
             setState(() {
               _paymentStatus = PaymentStatus.failed;
-              _errorMessage = 'Invalid Card';
+              _errorMessage = 'Invalid card. Please try again';
+            });
+          } else {
+            setState(() {
+              _paymentStatus = PaymentStatus.failed;
+              _errorMessage = 'Invalid card. Please try again';
             });
           }
         },
@@ -108,7 +119,8 @@ class _ContactlessScreenState extends State<ContactlessScreen>
           print('WebSocket Error: $error');
           setState(() {
             _paymentStatus = PaymentStatus.failed;
-            _errorMessage = 'Failed to connect to RFID reader';
+            _errorMessage =
+                'Failed to connect to RFID reader. Please try again';
           });
         },
 
@@ -138,39 +150,15 @@ class _ContactlessScreenState extends State<ContactlessScreen>
         widget.id ?? '',
       );
       if (success) {
-        _paymentStatus = PaymentStatus.success;
-        showDialog(
-          context: context,
-          builder:
-              (context) => AlertDialog(
-                title: Text('Payment Successful'),
-                content: Text('Your payment has been processed successfully!'),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder:
-                              (context) => QRScreen(
-                                amount: widget.amount,
-                                duration: widget.duration,
-                                zone: widget.zone,
-                                plate: widget.plate,
-                                id: widget.id,
-                                apiService: widget.apiService,
-                              ),
-                        ),
-                      );
-                    },
-                    child: Text('OK'),
-                  ),
-                ],
-              ),
-        );
+        setState(() {
+          _paymentStatus = PaymentStatus.success;
+          // ticketId = ;
+        });
       } else {
-        _paymentStatus = PaymentStatus.failed;
-        _errorMessage = 'Error processing payment, please try again';
+        setState(() {
+          _paymentStatus = PaymentStatus.failed;
+          _errorMessage = 'Error processing payment. Please try again';
+        });
       }
     } catch (e) {
       ScaffoldMessenger.of(
@@ -182,7 +170,7 @@ class _ContactlessScreenState extends State<ContactlessScreen>
   void _handlePaymentTimeout() {
     setState(() {
       _paymentStatus = PaymentStatus.failed;
-      _errorMessage = 'Timeout error';
+      _errorMessage = 'Timeout error. Please try again';
     });
   }
 
@@ -397,7 +385,7 @@ class _ContactlessScreenState extends State<ContactlessScreen>
             SizedBox(height: 10),
 
             // Retry payment if it failed
-            if (_paymentStatus == PaymentStatus.failed)
+            if (_paymentStatus == PaymentStatus.failed) ...[
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -406,16 +394,42 @@ class _ContactlessScreenState extends State<ContactlessScreen>
                     backgroundColor: Colors.deepPurple,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    // shape: RoundedRectangleBorder(
-                    //   borderRadius: BorderRadius.circular(8),
-                    // ),
+                  ),
+                  child: Text("Retry", style: TextStyle(fontSize: 16)),
+                ),
+              ),
+            ] else if (_paymentStatus == PaymentStatus.success) ...[
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder:
+                            (context) => QRScreen(
+                              amount: widget.amount,
+                              duration: widget.duration,
+                              zone: widget.zone,
+                              plate: widget.plate,
+                              ticketId: ticketId,
+                              apiService: widget.apiService,
+                            ),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: _getStatusColor(),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
                   child: Text(
-                    _getStatusMessage(),
+                    "Continue to your ticket!",
                     style: TextStyle(fontSize: 16),
                   ),
                 ),
               ),
+            ],
           ],
         ),
       ),
