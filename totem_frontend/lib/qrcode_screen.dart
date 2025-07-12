@@ -7,6 +7,7 @@ class QRScreen extends StatelessWidget {
   final double amount;
   final double duration;
   final String zone;
+  final String uid;
   final String? ticketId;
   final String? plate;
   final ApiService apiService;
@@ -16,6 +17,7 @@ class QRScreen extends StatelessWidget {
     required this.amount,
     required this.duration,
     required this.zone,
+    required this.uid,
     this.ticketId,
     this.plate,
     required this.apiService,
@@ -27,12 +29,20 @@ class QRScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Extend your Parking Ticket!'),
+        title: Text('Donwload your Ticket!'),
         backgroundColor: Colors.deepPurple,
         foregroundColor: Colors.white,
       ),
       body: Center(
-        child: QrImageView(data: "$baseUrl/extend_ticket/$ticketId", size: 280),
+        child: Column(
+          children: [
+            QrImageView(
+              data: "$baseUrl/users/$uid/tickets/$ticketId/extend",
+              size: 280,
+            ),
+            Text("$baseUrl/users/$uid/tickets/$ticketId/extend"),
+          ],
+        ),
       ),
     );
   }

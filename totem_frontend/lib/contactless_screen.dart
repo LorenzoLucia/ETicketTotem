@@ -16,7 +16,7 @@ class ContactlessScreen extends StatefulWidget {
   final double amount;
   final double duration;
   final String zone;
-  final String? id;
+  final String uid;
   final String? plate;
   final ApiService apiService;
 
@@ -25,7 +25,7 @@ class ContactlessScreen extends StatefulWidget {
     required this.amount,
     required this.duration,
     required this.zone,
-    this.id,
+    required this.uid,
     this.plate,
     required this.apiService,
   });
@@ -141,18 +141,18 @@ class _ContactlessScreenState extends State<ContactlessScreen>
   Future<void> _processPayment() async {
     try {
       final methodId = dotenv.env["TOTEM_PAYMENT_METHOD_ID"];
-      final success = await widget.apiService.payTicket(
+      final (success, _ticketId) = await widget.apiService.payTicket(
         widget.plate ?? '',
         methodId ?? '',
         widget.amount.toString(),
         widget.duration.toString(),
         widget.zone,
-        widget.id ?? '',
+        widget.uid ?? '',
       );
       if (success) {
         setState(() {
           _paymentStatus = PaymentStatus.success;
-          // ticketId = ;
+          ticketId = _ticketId;
         });
       } else {
         setState(() {
@@ -366,10 +366,10 @@ class _ContactlessScreenState extends State<ContactlessScreen>
               ),
             ),
 
-            SizedBox(height: 15),
+            Spacer(),
             // RFID Status Icon
             _buildStatusIcon(),
-            SizedBox(height: 10),
+            Spacer(),
 
             // Messaggio stato
             Text(
@@ -382,7 +382,7 @@ class _ContactlessScreenState extends State<ContactlessScreen>
               textAlign: TextAlign.center,
             ),
 
-            SizedBox(height: 10),
+            Spacer(),
 
             // Retry payment if it failed
             if (_paymentStatus == PaymentStatus.failed) ...[
@@ -412,6 +412,7 @@ class _ContactlessScreenState extends State<ContactlessScreen>
                               duration: widget.duration,
                               zone: widget.zone,
                               plate: widget.plate,
+                              uid: widget.uid,
                               ticketId: ticketId,
                               apiService: widget.apiService,
                             ),
@@ -419,7 +420,7 @@ class _ContactlessScreenState extends State<ContactlessScreen>
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: _getStatusColor(),
+                    backgroundColor: Colors.deepPurple,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),

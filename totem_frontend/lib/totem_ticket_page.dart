@@ -8,7 +8,12 @@ import 'package:totem_frontend/wheel_time_picker_widget.dart';
 
 class TotemInputScreen extends StatefulWidget {
   final ApiService apiService;
-  const TotemInputScreen({super.key, required this.apiService});
+  final String uid;
+  const TotemInputScreen({
+    super.key,
+    required this.apiService,
+    required this.uid,
+  });
 
   @override
   State<TotemInputScreen> createState() => _TotemInputScreenState();
@@ -294,9 +299,8 @@ class _TotemInputScreenState extends State<TotemInputScreen> {
                               onTimeChanged: (Duration value) {
                                 setState(() {
                                   parkingTimeHours = value.inHours;
-                                  parkingTimeHours = value.inMinutes.remainder(
-                                    60,
-                                  );
+                                  parkingTimeMinutes = value.inMinutes
+                                      .remainder(60);
                                 });
                                 calculatePrice();
                               },
@@ -387,6 +391,7 @@ class _TotemInputScreenState extends State<TotemInputScreen> {
                                                 parkingTimeMinutes / 60,
                                             zone: selectedZone!,
                                             plate: plate!,
+                                            uid: widget.uid,
                                             apiService: widget.apiService,
                                           ),
                                     ),

@@ -25,11 +25,9 @@ class HomeScreen extends StatelessWidget {
     apiService.setUserId(uid);
 
     switch (userData['role']) {
-      case 'CONTROLLER':
-        homePage = ParkingControllerPage(apiService: apiService);
-        break;
       case 'CUSTOMER':
-        homePage = TotemInputScreen(apiService: apiService);
+        homePage = TotemInputScreen(apiService: apiService, uid: uid);
+        break;
       default:
         return SnackBar(
           content: Text(
@@ -70,38 +68,3 @@ class MyAppState extends ChangeNotifier {
     notifyListeners();
   }
 }
-
-// class ErrorPage extends StatelessWidget {
-//   final ApiService apiService;
-//   final Map<String, dynamic> userData;
-
-//   const ErrorPage({
-//     super.key,
-//     required this.apiService,
-//     required this.userData,
-//   });
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(title: Text('Error Page'),
-//       ),
-//       body: Center(
-//         child: 
-//         Column(mainAxisAlignment: MainAxisAlignment.center,
-//         children: [
-//         Text(
-//           'Error: Trying to login with role: ${userData['role']}',
-//           style: const TextStyle(
-//             fontSize: 18,
-//             fontWeight: FontWeight.bold,
-//             color: Colors.red,
-//           ),
-//         ),
-        
-//         ]
-//       ),
-//       ),
-//     );
-//   }
-// }

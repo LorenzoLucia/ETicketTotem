@@ -463,7 +463,7 @@ class ApiService {
     }
   }
 
-  Future<bool> payTicket(
+  Future<(bool, String)> payTicket(
     String plate,
     String methodId,
     String amount,
@@ -497,7 +497,10 @@ class ApiService {
         }),
       );
 
-      return response.statusCode == 200;
+      final ticketId = jsonDecode(response.body)['ticket_id'].toString();
+      final success = response.statusCode == 200;
+
+      return (success, ticketId);
     } catch (e) {
       throw Exception('Error paying ticket: $e');
     }
