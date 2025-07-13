@@ -23,7 +23,18 @@ class QRScreen extends StatelessWidget {
     required this.apiService,
   });
 
-  final baseUrl = 'http://172.20.10.2:5001'; // Base URL
+  final baseUrl =
+      'http://172.20.10.2:5001'; // $baseUrl/users/$uid/tickets/$ticketId/download_pdf
+
+  QrCode _createQrCode() {
+    return QrCode(6, QrErrorCorrectLevel.L)..addData(
+      'https://raw.githubusercontent.com/LorenzoLucia/ETicketTotem/refs/heads/main/tickets_pdf/.pdf',
+    );
+  }
+
+  void _createPdf() {
+    QrImage(_createQrCode());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,11 +47,10 @@ class QRScreen extends StatelessWidget {
       body: Center(
         child: Column(
           children: [
-            QrImageView(
-              data: "$baseUrl/users/$uid/tickets/$ticketId/extend",
-              size: 280,
+            QrImageView.withQr(qr: _createQrCode(), size: 280),
+            Text(
+              "https://github.com/LorenzoLucia/ETicketTotem/blob/main/img/pin_table.png",
             ),
-            Text("$baseUrl/users/$uid/tickets/$ticketId/extend"),
           ],
         ),
       ),

@@ -1,0 +1,50 @@
+<svg width="270" height="340" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="270" height="340" fill="white" stroke="black" stroke-width="2"/>
+  
+  <!-- P Logo -->
+  <rect x="20" y="20" width="50" height="50" fill="black"/>
+  <text x="45" y="55" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="32" font-weight="bold">P</text>
+  
+  <!-- Title -->
+  <text x="85" y="40" fill="black" font-family="Arial, sans-serif" font-size="24" font-weight="bold" letter-spacing="2px">PARKING</text>
+  <text x="85" y="65" fill="black" font-family="Arial, sans-serif" font-size="24" font-weight="bold" letter-spacing="2px">E-TICKET</text>
+  
+  <!-- START field -->
+  <text x="20" y="120" fill="black" font-family="Arial, sans-serif" font-size="14" font-weight="bold">START:</text>
+  <foreignObject x="120" y="108" width="120" height="16">
+    <input type="text" style="width:120px; height:16px; border:none; background:transparent; font-family:Arial,sans-serif; font-size:14px;" />
+  </foreignObject>
+  
+  <!-- END field -->
+  <text x="20" y="150" fill="black" font-family="Arial, sans-serif" font-size="14" font-weight="bold">END:</text>
+  <foreignObject x="120" y="138" width="120" height="16">
+    <input type="text" style="width:120px; height:16px; border:none; background:transparent; font-family:Arial,sans-serif; font-size:14px;" />
+  </foreignObject>
+  
+  <!-- DURATION field -->
+  <text x="20" y="180" fill="black" font-family="Arial, sans-serif" font-size="14" font-weight="bold">DURATION:</text>
+  <foreignObject x="120" y="168" width="120" height="16">
+    <input type="text" style="width:120px; height:16px; border:none; background:transparent; font-family:Arial,sans-serif; font-size:14px;" />
+  </foreignObject>
+  
+  <!-- ZONE field -->
+  <text x="20" y="210" fill="black" font-family="Arial, sans-serif" font-size="14" font-weight="bold">ZONE:</text>
+  <foreignObject x="120" y="198" width="120" height="16">
+    <input type="text" style="width:120px; height:16px; border:none; background:transparent; font-family:Arial,sans-serif; font-size:14px;" />
+  </foreignObject>
+  
+  <!-- Dotted line -->
+  <line x1="20" y1="240" x2="250" y2="240" stroke="black" stroke-width="2" stroke-dasharray="5,5"/>
+  
+  <!-- PAID field -->
+  <text x="20" y="270" fill="black" font-family="Arial, sans-serif" font-size="18" font-weight="bold">PAID:</text>
+  <foreignObject x="120" y="256" width="120" height="18">
+    <input type="text" style="width:120px; height:18px; border:none; background:transparent; font-family:Arial,sans-serif; font-size:16px;" />
+  </foreignObject>
+  
+  <!-- EXTEND THE TICKET link -->
+  <text x="135" y="310" text-anchor="middle" fill="blue" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-decoration="underline">
+    <a href="#" fill="blue">EXTEND THE TICKET</a>
+  </text>
+</svg>
