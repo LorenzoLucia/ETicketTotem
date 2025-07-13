@@ -28,7 +28,7 @@ class QRScreen extends StatelessWidget {
 
   QrCode _createQrCode() {
     return QrCode(6, QrErrorCorrectLevel.L)..addData(
-      'https://raw.githubusercontent.com/LorenzoLucia/ETicketTotem/refs/heads/main/tickets_pdf/.pdf',
+      'https://raw.githubusercontent.com/LorenzoLucia/ETicketTotem/refs/heads/main/ticket_files/',
     );
   }
 
