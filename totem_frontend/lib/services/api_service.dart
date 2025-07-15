@@ -463,7 +463,47 @@ class ApiService {
     }
   }
 
-  Future<(bool, String)> payTicket(
+  Future<bool> createTicketSvg(
+    String startTime,
+    String endTime,
+    String duration,
+    String zone,
+    String amount,
+    String ticketId,
+  ) async {
+    final tokenId = await getTokenId();
+
+    final url = Uri.parse('$baseUrl/tickets/$ticketId/create_ticket_svg');
+    try {
+      print(
+        jsonEncode({
+          'start_time': startTime,
+          'end_time': endTime,
+          'duration': duration,
+          'zone': zone,
+          'amount': amount,
+        }),
+      );
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json', 'auth': (tokenId ?? '')},
+        body: jsonEncode({
+          'start_time': startTime,
+          'end_time': endTime,
+          'duration': duration,
+          'zone': zone,
+          'amount': amount,
+        }),
+      );
+
+      final success = response.statusCode == 200;
+      return success;
+    } catch (e) {
+      throw Exception('Error creating ticket QR code: $e');
+    }
+  }
+
+  Future<(bool, String, String, String)> payTicket(
     String plate,
     String methodId,
     String amount,
@@ -498,9 +538,11 @@ class ApiService {
       );
 
       final ticketId = jsonDecode(response.body)['ticket_id'].toString();
+      final startTime = jsonDecode(response.body)['start_time'].toString();
+      final endTime = jsonDecode(response.body)['end_time'].toString();
       final success = response.statusCode == 200;
 
-      return (success, ticketId);
+      return (success, ticketId, startTime, endTime);
     } catch (e) {
       throw Exception('Error paying ticket: $e');
     }

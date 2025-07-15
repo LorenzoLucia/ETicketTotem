@@ -1,10 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/status.dart' as status;
-import 'dart:convert';
 import 'dart:async';
 import 'package:totem_frontend/services/api_service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -42,7 +40,12 @@ class _ContactlessScreenState extends State<ContactlessScreen>
   late Animation<double> _pulseAnimation;
   Timer? _timeoutTimer;
   String? _errorMessage;
+
   String? ticketId;
+  String? startTime;
+  String? endTime;
+
+  bool createdQrUrl = false;
 
   @override
   void initState() {
@@ -141,18 +144,21 @@ class _ContactlessScreenState extends State<ContactlessScreen>
   Future<void> _processPayment() async {
     try {
       final methodId = dotenv.env["TOTEM_PAYMENT_METHOD_ID"];
-      final (success, _ticketId) = await widget.apiService.payTicket(
-        widget.plate ?? '',
-        methodId ?? '',
-        widget.amount.toString(),
-        widget.duration.toString(),
-        widget.zone,
-        widget.uid ?? '',
-      );
+      final (success, _ticketId, _startTime, _endTime) = await widget.apiService
+          .payTicket(
+            widget.plate ?? '',
+            methodId ?? '',
+            widget.amount.toString(),
+            widget.duration.toString(),
+            widget.zone,
+            widget.uid,
+          );
       if (success) {
         setState(() {
           _paymentStatus = PaymentStatus.success;
           ticketId = _ticketId;
+          startTime = _startTime;
+          endTime = _endTime;
         });
       } else {
         setState(() {
@@ -164,6 +170,32 @@ class _ContactlessScreenState extends State<ContactlessScreen>
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Error processing payment: $e')));
+    }
+  }
+
+  Future<void> _createQrUrl() async {
+    try {
+      final success = await widget.apiService.createTicketSvg(
+        startTime ?? '',
+        endTime ?? '',
+        widget.duration.toString(),
+        widget.zone,
+        widget.amount.toString(),
+        ticketId ?? '',
+      );
+      if (success) {
+        setState(() {
+          createdQrUrl = true;
+        });
+      } else {
+        setState(() {
+          createdQrUrl = false;
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error generating QR code payment: $e')),
+      );
     }
   }
 
@@ -403,21 +435,21 @@ class _ContactlessScreenState extends State<ContactlessScreen>
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder:
-                            (context) => QRScreen(
-                              amount: widget.amount,
-                              duration: widget.duration,
-                              zone: widget.zone,
-                              plate: widget.plate,
-                              uid: widget.uid,
-                              ticketId: ticketId,
-                              apiService: widget.apiService,
+                    _createQrUrl();
+                    createdQrUrl
+                        ? {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder:
+                                  (context) => QRScreen(
+                                    ticketId: ticketId,
+                                    apiService: widget.apiService,
+                                  ),
                             ),
-                      ),
-                    );
+                          ),
+                        }
+                        : null;
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.deepPurple,

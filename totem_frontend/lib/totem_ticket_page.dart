@@ -21,7 +21,6 @@ class TotemInputScreen extends StatefulWidget {
 
 class _TotemInputScreenState extends State<TotemInputScreen> {
   // ignore: unused_field
-  static const double fontSizeRegular = 16;
   static const double fontSizeLarge = 18;
   static const double containerHeight = 40;
   static const double paddingSize = 7;

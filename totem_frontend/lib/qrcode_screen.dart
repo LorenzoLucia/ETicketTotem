@@ -1,46 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:totem_frontend/services/api_service.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class QRScreen extends StatelessWidget {
-  final double amount;
-  final double duration;
-  final String zone;
-  final String uid;
   final String? ticketId;
-  final String? plate;
   final ApiService apiService;
 
-  QRScreen({
-    super.key,
-    required this.amount,
-    required this.duration,
-    required this.zone,
-    required this.uid,
-    this.ticketId,
-    this.plate,
-    required this.apiService,
-  });
+  QRScreen({super.key, this.ticketId, required this.apiService});
 
-  final baseUrl =
-      'http://172.20.10.2:5001'; // $baseUrl/users/$uid/tickets/$ticketId/download_pdf
+  final gitUrl =
+      "https://raw.githubusercontent.com/LorenzoLucia/ETicketTotem/refs/heads/main/ticket_files";
 
   QrCode _createQrCode() {
-    return QrCode(6, QrErrorCorrectLevel.L)..addData(
-      'https://raw.githubusercontent.com/LorenzoLucia/ETicketTotem/refs/heads/main/ticket_files/',
-    );
-  }
-
-  void _createPdf() {
-    QrImage(_createQrCode());
+    return QrCode(6, QrErrorCorrectLevel.L)..addData("$gitUrl/$ticketId.svg");
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Donwload your Ticket!'),
+        title: Text('Save your E-Ticket!'),
         backgroundColor: Colors.deepPurple,
         foregroundColor: Colors.white,
       ),
@@ -48,9 +27,7 @@ class QRScreen extends StatelessWidget {
         child: Column(
           children: [
             QrImageView.withQr(qr: _createQrCode(), size: 280),
-            Text(
-              "https://github.com/LorenzoLucia/ETicketTotem/blob/main/img/pin_table.png",
-            ),
+            Text("$gitUrl/$ticketId.svg"),
           ],
         ),
       ),
