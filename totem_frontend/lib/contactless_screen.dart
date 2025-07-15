@@ -174,13 +174,19 @@ class _ContactlessScreenState extends State<ContactlessScreen>
   }
 
   Future<void> _createQrUrl() async {
+    // create strings for ticket
+    final String zoneStr = widget.zone.substring(4);
+    var durationStr = _hourAndMinuts(widget.duration);
+    var amountStr = widget.amount.toStringAsFixed(2);
+    amountStr = "$amountStr €";
+
     try {
       final success = await widget.apiService.createTicketSvg(
         startTime ?? '',
         endTime ?? '',
-        widget.duration.toString(),
-        widget.zone,
-        widget.amount.toString(),
+        durationStr,
+        zoneStr,
+        amountStr,
         ticketId ?? '',
       );
       if (success) {
@@ -434,8 +440,8 @@ class _ContactlessScreenState extends State<ContactlessScreen>
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {
-                    _createQrUrl();
+                  onPressed: () async {
+                    await _createQrUrl();
                     createdQrUrl
                         ? {
                           Navigator.push(

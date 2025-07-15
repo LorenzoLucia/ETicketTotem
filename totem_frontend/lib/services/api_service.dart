@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:intl/intl_browser.dart';
+import 'package:intl/intl.dart';
 
 class ApiService {
   final String baseUrl;
@@ -471,8 +473,8 @@ class ApiService {
     String amount,
     String ticketId,
   ) async {
+    findSystemLocale();
     final tokenId = await getTokenId();
-
     final url = Uri.parse('$baseUrl/tickets/$ticketId/create_ticket_svg');
     try {
       print(
@@ -538,8 +540,22 @@ class ApiService {
       );
 
       final ticketId = jsonDecode(response.body)['ticket_id'].toString();
-      final startTime = jsonDecode(response.body)['start_time'].toString();
-      final endTime = jsonDecode(response.body)['end_time'].toString();
+      // Convert string from UTC to local (UTC+2) and format
+      var startTime = (jsonDecode(response.body)['start_time']).toString();
+      var localStartTime = DateFormat(
+        "EEE, dd MMM yyyy HH:mm:ss z",
+      ).parse(startTime, true);
+      startTime = localStartTime.toLocal().toString();
+      startTime = startTime.substring(0, startTime.length - 7);
+
+      // Convert string from UTC to local (UTC+2) and format
+      var endTime = (jsonDecode(response.body)['end_time']).toString();
+      var localEndTime = DateFormat(
+        "EEE, dd MMM yyyy HH:mm:ss z",
+      ).parse(endTime, true);
+      endTime = localEndTime.toLocal().toString();
+      endTime = endTime.substring(0, endTime.length - 7);
+
       final success = response.statusCode == 200;
 
       return (success, ticketId, startTime, endTime);
