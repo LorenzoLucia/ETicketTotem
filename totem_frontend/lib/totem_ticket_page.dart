@@ -224,9 +224,10 @@ class _TotemInputScreenState extends State<TotemInputScreen> {
                               hint: Text('Zone'),
                               items:
                                   zonePrices.keys.map((zone) {
+                                    double zonePrice = zonePrices[zone]!;
                                     return DropdownMenuItem<String>(
                                       value: zone,
-                                      child: Text(zone),
+                                      child: Text("$zone -  $zonePrice €/hr"),
                                     );
                                   }).toList(),
                               onChanged: (value) {
