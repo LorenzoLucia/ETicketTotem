@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:totem_frontend/contactless_screen.dart';
 import 'package:totem_frontend/services/api_service.dart';
 import 'package:totem_frontend/wheel_time_picker_widget.dart';
+import 'package:virtual_keyboard_custom_layout/virtual_keyboard_custom_layout.dart';
 
 class TotemInputScreen extends StatefulWidget {
   final ApiService apiService;
@@ -25,6 +26,7 @@ class _TotemInputScreenState extends State<TotemInputScreen> {
   static const double containerHeight = 40;
   static const double paddingSize = 7;
   final TextEditingController plateController = TextEditingController();
+  final FocusNode zoneFocusNode = FocusNode();
 
   DateTime now = DateTime.now();
 
@@ -35,18 +37,76 @@ class _TotemInputScreenState extends State<TotemInputScreen> {
   int parkingTimeMinutes = 0; // Default to 0 minutes
   double tikcetPrice = 0.0;
 
+  // Variable for keyboard
+  var isKeyboardVisible = false;
+  final List<List<dynamic>>? keyLayout = [
+    ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'],
+    ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', "BACKSPACE"],
+    ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', "RETURN"],
+    ['Z', 'X', 'C', 'V', 'B', 'N', 'M'],
+  ];
+
+  OverlayEntry? entry;
+
+  void _showKeyboard() {
+    entry = OverlayEntry(
+      builder:
+          (context) => Positioned(
+            height: 180,
+            width: MediaQuery.of(context).size.width,
+            bottom: 0,
+            child: VirtualKeyboard(
+              textController: plateController,
+              height: 180,
+              width: double.infinity,
+              fontSize: fontSizeLarge,
+              type: VirtualKeyboardType.Custom,
+              keys: keyLayout,
+              onKeyPress: _onKeyPress,
+            ),
+          ),
+    );
+
+    final overlay = Overlay.of(context);
+    overlay.insert(entry!);
+  }
+
+  void _hideKeyboard() {
+    entry!.remove();
+  }
+
+  void _saveTextValues() {
+    setState(() {
+      plateController.text == ''
+          ? plate = null
+          : plate = plateController.text.trim();
+    });
+  }
+
+  void _onKeyPress(VirtualKeyboardKey key) {
+    if (key.action == VirtualKeyboardKeyAction.Return) {
+      _hideKeyboard();
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     loadPrices();
     // Start listening to changes.
     plateController.addListener(_saveTextValues);
+    zoneFocusNode.addListener(() {
+      if (zoneFocusNode.hasFocus) {
+        _hideKeyboard();
+      }
+    });
   }
 
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
     plateController.dispose();
+    zoneFocusNode.dispose();
     super.dispose();
   }
 
@@ -73,12 +133,6 @@ class _TotemInputScreenState extends State<TotemInputScreen> {
         );
       });
     }
-  }
-
-  void _saveTextValues() {
-    setState(() {
-      plateController.text == '' ? plate = null : plate = plateController.text;
-    });
   }
 
   String calculateTicketEndTime() {
@@ -111,13 +165,20 @@ class _TotemInputScreenState extends State<TotemInputScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Select Ticket Details'),
-        centerTitle: true,
-      ),
-      body: GestureDetector(
-        child: Column(
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+        setState(() {
+          isKeyboardVisible = false;
+        });
+        _hideKeyboard();
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Select Ticket Details'),
+          centerTitle: true,
+        ),
+        body: Column(
           children: [
             Expanded(
               child: Center(
@@ -160,7 +221,14 @@ class _TotemInputScreenState extends State<TotemInputScreen> {
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: TextField(
+                              keyboardType: TextInputType.none,
                               controller: plateController,
+                              onTap: () {
+                                setState(() {
+                                  isKeyboardVisible = true;
+                                });
+                                _showKeyboard();
+                              },
                               textAlign: TextAlign.left,
                               style: const TextStyle(
                                 fontSize: fontSizeLarge,
@@ -214,6 +282,7 @@ class _TotemInputScreenState extends State<TotemInputScreen> {
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: DropdownButton<String>(
+                              focusNode: zoneFocusNode,
                               padding: EdgeInsets.only(left: paddingSize),
                               value: selectedZone,
                               style: const TextStyle(
@@ -237,21 +306,6 @@ class _TotemInputScreenState extends State<TotemInputScreen> {
                                 });
                               },
                             ),
-                            // TextField(
-                            //   controller: zoneController,
-                            //   textAlign: TextAlign.left,
-                            //   style: const TextStyle(
-                            //     fontSize: fontSizeLarge,
-                            //     fontWeight: FontWeight.bold,
-                            //     letterSpacing: 1.5,
-                            //   ),
-                            //   decoration: const InputDecoration(
-                            //     border: OutlineInputBorder(),
-                            //     contentPadding: EdgeInsets.all(paddingSize),
-                            //     hintText: 'Zone',
-                            //     hintStyle: TextStyle(color: Colors.grey),
-                            //   ),
-                            // ),
                           ),
                         ],
                       ),
@@ -358,6 +412,7 @@ class _TotemInputScreenState extends State<TotemInputScreen> {
                           ),
                         ],
                       ),
+
                       Spacer(),
 
                       // Testo Prezzo
