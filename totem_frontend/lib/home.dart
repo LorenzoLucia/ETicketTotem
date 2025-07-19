@@ -5,6 +5,7 @@ import 'package:totem_frontend/totem_ticket_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:english_words/english_words.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class HomeScreen extends StatelessWidget {
   final ApiService apiService;
@@ -29,11 +30,13 @@ class HomeScreen extends StatelessWidget {
         homePage = TotemInputScreen(apiService: apiService, uid: uid);
         break;
       default:
-        return SnackBar(
+        homePage = ErrorPage(userData: userData);
+        SnackBar(
           content: Text(
             'Error: Trying to login with role: ${userData['role']}',
           ),
         );
+        break;
     }
 
     return ChangeNotifierProvider(
@@ -66,5 +69,58 @@ class MyAppState extends ChangeNotifier {
       favorites.add(current);
     }
     notifyListeners();
+  }
+}
+
+class ErrorPage extends StatelessWidget {
+  final Map<String, dynamic> userData;
+
+  const ErrorPage({super.key, required this.userData});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Login Error'),
+        backgroundColor: Colors.deepPurple,
+        foregroundColor: Colors.white,
+      ),
+      body: Padding(
+        padding: EdgeInsets.all(20),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "Error: trying to login with role ${userData['role']}",
+                style: TextStyle(
+                  color: Colors.red,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+
+              SizedBox(height: 20),
+
+              Container(
+                width: 150,
+                child: ElevatedButton(
+                  onPressed: () async {
+                    await FirebaseAuth.instance.signOut();
+                    Navigator.pop(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.deepPurple,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                  ),
+                  child: const Text('Retry', style: TextStyle(fontSize: 18)),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
