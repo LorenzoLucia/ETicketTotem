@@ -38,7 +38,6 @@ class _TotemInputScreenState extends State<TotemInputScreen> {
   double tikcetPrice = 0.0;
 
   // Variable for keyboard
-  var isKeyboardVisible = false;
   final List<List<dynamic>>? keyLayout = [
     ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'],
     ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', "BACKSPACE"],
@@ -52,15 +51,13 @@ class _TotemInputScreenState extends State<TotemInputScreen> {
     entry = OverlayEntry(
       builder:
           (context) => Positioned(
-            height: 180,
-            width: MediaQuery.of(context).size.width,
             bottom: 0,
             child: Container(
               color: Colors.white,
               child: VirtualKeyboard(
                 borderColor: Colors.grey,
                 height: 180,
-                width: double.infinity,
+                width: MediaQuery.of(context).size.width,
                 fontSize: fontSizeLarge,
                 textController: plateController,
                 type: VirtualKeyboardType.Custom,
@@ -172,9 +169,7 @@ class _TotemInputScreenState extends State<TotemInputScreen> {
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
-        setState(() {
-          isKeyboardVisible = false;
-        });
+        setState(() {});
         _hideKeyboard();
       },
       child: Scaffold(
@@ -234,9 +229,7 @@ class _TotemInputScreenState extends State<TotemInputScreen> {
                               keyboardType: TextInputType.none,
                               controller: plateController,
                               onTap: () {
-                                setState(() {
-                                  isKeyboardVisible = true;
-                                });
+                                setState(() {});
                                 _showKeyboard();
                               },
                               textAlign: TextAlign.left,

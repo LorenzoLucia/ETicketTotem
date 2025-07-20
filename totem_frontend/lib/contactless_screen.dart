@@ -259,8 +259,8 @@ class _ContactlessScreenState extends State<ContactlessScreen>
 
       case PaymentStatus.processing:
         return Container(
-          width: 100,
-          height: 100,
+          width: 90,
+          height: 90,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: Colors.orange.withOpacity(0.1),
@@ -274,8 +274,8 @@ class _ContactlessScreenState extends State<ContactlessScreen>
 
       case PaymentStatus.success:
         return Container(
-          width: 100,
-          height: 100,
+          width: 90,
+          height: 90,
           decoration: const BoxDecoration(
             shape: BoxShape.circle,
             color: Colors.green,
@@ -285,8 +285,8 @@ class _ContactlessScreenState extends State<ContactlessScreen>
 
       case PaymentStatus.failed:
         return Container(
-          width: 100,
-          height: 100,
+          width: 90,
+          height: 90,
           decoration: const BoxDecoration(
             shape: BoxShape.circle,
             color: Colors.red,
