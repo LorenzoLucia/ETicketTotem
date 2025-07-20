@@ -45,7 +45,7 @@ class _ContactlessScreenState extends State<ContactlessScreen>
   String? startTime;
   String? endTime;
 
-  bool createdQrUrl = false;
+  // bool createdQrUrl = false;
 
   @override
   void initState() {
@@ -173,37 +173,37 @@ class _ContactlessScreenState extends State<ContactlessScreen>
     }
   }
 
-  Future<void> _createQrUrl() async {
-    // create strings for ticket
-    final String zoneStr = widget.zone.substring(4);
-    var durationStr = _hourAndMinuts(widget.duration);
-    var amountStr = widget.amount.toStringAsFixed(2);
-    amountStr = "$amountStr €";
+  // Future<void> _createQrUrl() async {
+  //   // create strings for ticket
+  //   final String zoneStr = widget.zone.substring(4);
+  //   var durationStr = _hourAndMinuts(widget.duration);
+  //   var amountStr = widget.amount.toStringAsFixed(2);
+  //   amountStr = "$amountStr €";
 
-    try {
-      final success = await widget.apiService.createTicketSvg(
-        startTime ?? '',
-        endTime ?? '',
-        durationStr,
-        zoneStr,
-        amountStr,
-        ticketId ?? '',
-      );
-      if (success) {
-        setState(() {
-          createdQrUrl = true;
-        });
-      } else {
-        setState(() {
-          createdQrUrl = false;
-        });
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error generating QR code payment: $e')),
-      );
-    }
-  }
+  //   try {
+  //     final success = await widget.apiService.createTicketSvg(
+  //       startTime ?? '',
+  //       endTime ?? '',
+  //       durationStr,
+  //       zoneStr,
+  //       amountStr,
+  //       ticketId ?? '',
+  //     );
+  //     if (success) {
+  //       setState(() {
+  //         createdQrUrl = true;
+  //       });
+  //     } else {
+  //       setState(() {
+  //         createdQrUrl = false;
+  //       });
+  //     }
+  //   } catch (e) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text('Error generating QR code payment: $e')),
+  //     );
+  //   }
+  // }
 
   void _handlePaymentTimeout() {
     setState(() {
@@ -464,22 +464,17 @@ class _ContactlessScreenState extends State<ContactlessScreen>
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () async {
-                    await _createQrUrl();
-                    createdQrUrl
-                        ? {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder:
-                                  (context) => QRScreen(
-                                    ticketId: ticketId,
-                                    apiService: widget.apiService,
-                                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder:
+                            (context) => QRScreen(
+                              ticketId: ticketId,
+                              apiService: widget.apiService,
                             ),
-                          ),
-                        }
-                        : null;
+                      ),
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.deepPurple,
@@ -487,7 +482,7 @@ class _ContactlessScreenState extends State<ContactlessScreen>
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
                   child: Text(
-                    "Continue to your ticket! It may take a few seconds",
+                    "Continue to your E-ticket",
                     style: TextStyle(fontSize: 20),
                   ),
                 ),

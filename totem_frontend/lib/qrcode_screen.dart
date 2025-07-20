@@ -21,7 +21,7 @@ class _QRScreenState extends State<QRScreen> {
   @override
   void initState() {
     super.initState();
-    _endTimer = Timer(const Duration(seconds: 40), () {
+    _endTimer = Timer(const Duration(seconds: 60), () {
       _endTicketPurchase();
     });
   }
@@ -45,7 +45,7 @@ class _QRScreenState extends State<QRScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Save your E-Ticket!'),
+        title: Text('Save your E-Ticket'),
         backgroundColor: Colors.deepPurple,
         foregroundColor: Colors.white,
       ),
