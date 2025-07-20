@@ -430,7 +430,7 @@ class _TotemInputScreenState extends State<TotemInputScreen> {
               // Testo Prezzo
               Text(
                 'Price: €${tikcetPrice.toStringAsFixed(2)}',
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
 
               Spacer(),

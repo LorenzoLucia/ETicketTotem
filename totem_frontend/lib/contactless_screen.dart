@@ -482,7 +482,7 @@ class _ContactlessScreenState extends State<ContactlessScreen>
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
                   child: Text(
-                    "Continue to your E-ticket",
+                    "Continue to your E-Ticket",
                     style: TextStyle(fontSize: 20),
                   ),
                 ),
