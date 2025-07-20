@@ -39,6 +39,7 @@ class AuthGate extends StatelessWidget {
               EmailAuthProvider(),
               // GoogleProvider(clientId: clientId),
             ],
+            showPasswordVisibilityToggle: true,
             headerBuilder: (context, constraints, shrinkOffset) {
               return Padding(
                 padding: const EdgeInsets.all(20),
@@ -83,6 +84,7 @@ class AuthGate extends StatelessWidget {
                   EmailAuthProvider(),
                   // GoogleProvider(clientId: clientId),
                 ],
+                showPasswordVisibilityToggle: true,
                 headerBuilder: (context, constraints, shrinkOffset) {
                   return Padding(
                     padding: const EdgeInsets.all(20),
