@@ -29,7 +29,7 @@ class ContactlessScreen extends StatefulWidget {
   });
 
   @override
-  _ContactlessScreenState createState() => _ContactlessScreenState();
+  State<ContactlessScreen> createState() => _ContactlessScreenState();
 }
 
 class _ContactlessScreenState extends State<ContactlessScreen>
@@ -240,8 +240,8 @@ class _ContactlessScreenState extends State<ContactlessScreen>
             return Transform.scale(
               scale: _pulseAnimation.value,
               child: Container(
-                width: 100,
-                height: 100,
+                width: 90,
+                height: 90,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: Colors.blue.withOpacity(0.1),
@@ -332,7 +332,7 @@ class _ContactlessScreenState extends State<ContactlessScreen>
         automaticallyImplyLeading: _paymentStatus != PaymentStatus.processing,
       ),
       body: Padding(
-        padding: EdgeInsets.all(15.0),
+        padding: EdgeInsets.all(25.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -346,9 +346,15 @@ class _ContactlessScreenState extends State<ContactlessScreen>
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Amount to Pay:', style: TextStyle(fontSize: 18)),
                         Text(
-                          '€ ${widget.amount.toStringAsFixed(2)}',
+                          'Amount to Pay:',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          '€${widget.amount.toStringAsFixed(2)}',
                           style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
@@ -361,11 +367,17 @@ class _ContactlessScreenState extends State<ContactlessScreen>
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Duration:', style: TextStyle(fontSize: 16)),
+                        Text(
+                          'Duration:',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                         Text(
                           _hourAndMinuts(widget.duration),
                           style: TextStyle(
-                            fontSize: 16,
+                            fontSize: 20,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -375,11 +387,17 @@ class _ContactlessScreenState extends State<ContactlessScreen>
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Zone:', style: TextStyle(fontSize: 16)),
+                        Text(
+                          'Zone:',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                         Text(
                           widget.zone,
                           style: TextStyle(
-                            fontSize: 16,
+                            fontSize: 20,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -389,11 +407,17 @@ class _ContactlessScreenState extends State<ContactlessScreen>
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Plate:', style: TextStyle(fontSize: 16)),
+                        Text(
+                          'Plate:',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                         Text(
                           widget.plate!,
                           style: TextStyle(
-                            fontSize: 16,
+                            fontSize: 20,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -413,8 +437,8 @@ class _ContactlessScreenState extends State<ContactlessScreen>
             Text(
               _getStatusMessage(),
               style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
                 color: _getStatusColor(),
               ),
               textAlign: TextAlign.center,
@@ -433,7 +457,7 @@ class _ContactlessScreenState extends State<ContactlessScreen>
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
-                  child: Text("Retry", style: TextStyle(fontSize: 16)),
+                  child: Text("Retry", style: TextStyle(fontSize: 22)),
                 ),
               ),
             ] else if (_paymentStatus == PaymentStatus.success) ...[
@@ -464,7 +488,7 @@ class _ContactlessScreenState extends State<ContactlessScreen>
                   ),
                   child: Text(
                     "Continue to your ticket! It may take a few seconds",
-                    style: TextStyle(fontSize: 16),
+                    style: TextStyle(fontSize: 20),
                   ),
                 ),
               ),

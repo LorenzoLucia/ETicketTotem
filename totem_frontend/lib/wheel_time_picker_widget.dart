@@ -120,7 +120,7 @@ class _TimePickerTextFieldState extends State<TimePickerTextField> {
           builder: (BuildContext context, StateSetter setModalState) {
             String? title = widget.title;
             return Container(
-              height: MediaQuery.of(context).size.height * 0.6,
+              height: MediaQuery.of(context).size.height * 0.75,
               decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
@@ -153,7 +153,7 @@ class _TimePickerTextFieldState extends State<TimePickerTextField> {
                             'Cancel',
                             style: TextStyle(
                               color: Colors.red,
-                              fontSize: 18,
+                              fontSize: 20,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -161,7 +161,7 @@ class _TimePickerTextFieldState extends State<TimePickerTextField> {
                         Text(
                           title ?? 'Select Ticket Duration',
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: 20,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -180,8 +180,9 @@ class _TimePickerTextFieldState extends State<TimePickerTextField> {
                           child: const Text(
                             'Confirm',
                             style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
+                              color: Colors.deepPurple,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
@@ -197,14 +198,14 @@ class _TimePickerTextFieldState extends State<TimePickerTextField> {
                       children: [
                         const Text(
                           'Ticket End Time: ',
-                          style: TextStyle(fontSize: 16),
+                          style: TextStyle(fontSize: 20),
                         ),
                         Text(
                           _formatDate(_calculateTicketEndTime(selectedTime)),
                           style: const TextStyle(
-                            fontSize: 16,
+                            fontSize: 20,
                             fontWeight: FontWeight.bold,
-                            color: Colors.blue,
+                            color: Colors.deepPurple,
                           ),
                         ),
                       ],
@@ -223,9 +224,9 @@ class _TimePickerTextFieldState extends State<TimePickerTextField> {
                           Text(
                             "Ticket must last at least 5 minutes!",
                             style: const TextStyle(
-                              fontSize: 16,
+                              fontSize: 18,
                               fontWeight: FontWeight.normal,
-                              color: Color.fromARGB(255, 243, 33, 33),
+                              color: Colors.red,
                             ),
                           ),
                         ],
@@ -237,10 +238,7 @@ class _TimePickerTextFieldState extends State<TimePickerTextField> {
                   // Time Picker
                   Expanded(
                     child: Container(
-                      margin: const EdgeInsets.symmetric(
-                        horizontal: 15,
-                        vertical: 15,
-                      ),
+                      margin: const EdgeInsets.all(15),
                       decoration: BoxDecoration(
                         color: Colors.grey.shade50,
                         borderRadius: BorderRadius.circular(8),
@@ -273,16 +271,24 @@ class _TimePickerTextFieldState extends State<TimePickerTextField> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return Container(
       height: 40,
-      width: 90,
-      child: TextFormField(
+      width: MediaQuery.of(context).size.width * 0.35,
+      child: TextField(
         controller: _controller,
         readOnly: true,
         onTap: _showTimePicker,
         textAlign: TextAlign.left,
         decoration: InputDecoration(
           suffixIcon: const Icon(Icons.arrow_drop_down),
+          border: OutlineInputBorder(),
+          contentPadding: EdgeInsets.all(7),
+          hintStyle: TextStyle(color: Colors.grey),
+        ),
+        style: const TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+          letterSpacing: 1.5,
         ),
       ),
     );

@@ -22,7 +22,7 @@ class TotemInputScreen extends StatefulWidget {
 
 class _TotemInputScreenState extends State<TotemInputScreen> {
   // ignore: unused_field
-  static const double fontSizeLarge = 18;
+  static const double fontSizeLarge = 20;
   static const double containerHeight = 40;
   static const double paddingSize = 7;
   final TextEditingController plateController = TextEditingController();
@@ -55,14 +55,18 @@ class _TotemInputScreenState extends State<TotemInputScreen> {
             height: 180,
             width: MediaQuery.of(context).size.width,
             bottom: 0,
-            child: VirtualKeyboard(
-              textController: plateController,
-              height: 180,
-              width: double.infinity,
-              fontSize: fontSizeLarge,
-              type: VirtualKeyboardType.Custom,
-              keys: keyLayout,
-              onKeyPress: _onKeyPress,
+            child: Container(
+              color: Colors.white,
+              child: VirtualKeyboard(
+                borderColor: Colors.grey,
+                height: 180,
+                width: double.infinity,
+                fontSize: fontSizeLarge,
+                textController: plateController,
+                type: VirtualKeyboardType.Custom,
+                keys: keyLayout,
+                onKeyPress: _onKeyPress,
+              ),
             ),
           ),
     );
@@ -177,31 +181,37 @@ class _TotemInputScreenState extends State<TotemInputScreen> {
         appBar: AppBar(
           title: const Text('Select Ticket Details'),
           centerTitle: true,
+          backgroundColor: Colors.deepPurple,
+          foregroundColor: Colors.white,
         ),
-        body: Column(
-          children: [
-            Expanded(
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(40.0),
+        body: Padding(
+          padding: const EdgeInsets.all(25.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Testo Targa
+              Card(
+                elevation: 4,
+                child: Container(
+                  padding: EdgeInsets.all(15),
+                  width: MediaQuery.of(context).size.width * 0.7,
+                  height: MediaQuery.of(context).size.height * 0.45,
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // Testo Targa
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Container(
-                            width: 200,
+                            width: MediaQuery.of(context).size.width * 0.25,
                             height: containerHeight,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
+                            // decoration: BoxDecoration(
+                            //   color: Colors.white,
+                            //   borderRadius: BorderRadius.circular(8),
+                            // ),
                             child: Padding(
                               padding: EdgeInsets.all(paddingSize),
                               child: Text(
-                                'Enter Plate',
+                                'Enter Plate:',
                                 style: const TextStyle(
                                   fontSize: fontSizeLarge,
                                   fontWeight: FontWeight.bold,
@@ -211,15 +221,15 @@ class _TotemInputScreenState extends State<TotemInputScreen> {
                             ),
                           ),
 
-                          SizedBox(width: 20),
+                          Spacer(),
 
                           Container(
-                            width: 200,
+                            width: MediaQuery.of(context).size.width * 0.35,
                             height: containerHeight,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
+                            // decoration: BoxDecoration(
+                            //   color: Colors.white,
+                            //   borderRadius: BorderRadius.circular(8),
+                            // ),
                             child: TextField(
                               keyboardType: TextInputType.none,
                               controller: plateController,
@@ -253,16 +263,16 @@ class _TotemInputScreenState extends State<TotemInputScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Container(
-                            width: 200,
+                            width: MediaQuery.of(context).size.width * 0.25,
                             height: containerHeight,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
+                            // decoration: BoxDecoration(
+                            //   color: Colors.white,
+                            //   borderRadius: BorderRadius.circular(8),
+                            // ),
                             child: Padding(
                               padding: EdgeInsets.all(paddingSize),
                               child: Text(
-                                'Select Zone',
+                                'Select Zone:',
                                 style: const TextStyle(
                                   fontSize: fontSizeLarge,
                                   fontWeight: FontWeight.bold,
@@ -272,25 +282,24 @@ class _TotemInputScreenState extends State<TotemInputScreen> {
                             ),
                           ),
 
-                          SizedBox(width: 20),
+                          Spacer(),
 
                           Container(
-                            width: 200,
+                            width: MediaQuery.of(context).size.width * 0.35,
                             height: containerHeight,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: DropdownButton<String>(
+                            child: DropdownButtonFormField<String>(
                               focusNode: zoneFocusNode,
-                              padding: EdgeInsets.only(left: paddingSize),
+                              // padding: EdgeInsets.only(left: paddingSize),
                               value: selectedZone,
                               style: const TextStyle(
                                 fontSize: fontSizeLarge,
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: 1.5,
                               ),
-                              hint: Text('Zone'),
+                              hint: Text(
+                                'Zone',
+                                style: TextStyle(color: Colors.grey),
+                              ),
                               items:
                                   zonePrices.keys.map((zone) {
                                     double zonePrice = zonePrices[zone]!;
@@ -305,6 +314,11 @@ class _TotemInputScreenState extends State<TotemInputScreen> {
                                   calculatePrice();
                                 });
                               },
+                              decoration: const InputDecoration(
+                                border: OutlineInputBorder(),
+                                contentPadding: EdgeInsets.all(paddingSize),
+                                hintText: 'Insert Plate',
+                              ),
                             ),
                           ),
                         ],
@@ -317,16 +331,16 @@ class _TotemInputScreenState extends State<TotemInputScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Container(
-                            width: 200,
+                            width: MediaQuery.of(context).size.width * 0.25,
                             height: containerHeight,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
+                            // decoration: BoxDecoration(
+                            //   color: Colors.white,
+                            //   borderRadius: BorderRadius.circular(8),
+                            // ),
                             child: Padding(
                               padding: EdgeInsets.all(paddingSize),
                               child: Text(
-                                'Select End Time',
+                                'Select Duration:',
                                 style: const TextStyle(
                                   fontSize: fontSizeLarge,
                                   fontWeight: FontWeight.bold,
@@ -336,15 +350,15 @@ class _TotemInputScreenState extends State<TotemInputScreen> {
                             ),
                           ),
 
-                          SizedBox(width: 20),
+                          Spacer(),
 
                           Container(
-                            width: 200,
+                            width: MediaQuery.of(context).size.width * 0.35,
                             height: containerHeight,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
+                            // decoration: BoxDecoration(
+                            //   color: Colors.white,
+                            //   borderRadius: BorderRadius.circular(8),
+                            // ),
                             child: TimePickerTextField(
                               initialTime: Duration(
                                 hours: now.hour,
@@ -370,16 +384,16 @@ class _TotemInputScreenState extends State<TotemInputScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Container(
-                            width: 200,
+                            width: MediaQuery.of(context).size.width * 0.25,
                             height: containerHeight,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
+                            // decoration: BoxDecoration(
+                            //   color: Colors.white,
+                            //   borderRadius: BorderRadius.circular(8),
+                            // ),
                             child: Padding(
                               padding: EdgeInsets.all(paddingSize),
                               child: Text(
-                                'Ticket Expiration Date',
+                                'Expiration Date:',
                                 style: const TextStyle(
                                   fontSize: fontSizeLarge,
                                   fontWeight: FontWeight.bold,
@@ -389,15 +403,15 @@ class _TotemInputScreenState extends State<TotemInputScreen> {
                             ),
                           ),
 
-                          SizedBox(width: 20),
+                          Spacer(),
 
                           Container(
-                            width: 200,
+                            width: MediaQuery.of(context).size.width * 0.35,
                             height: containerHeight,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
+                            // decoration: BoxDecoration(
+                            //   color: Colors.white,
+                            //   borderRadius: BorderRadius.circular(8),
+                            // ),
                             child: Padding(
                               padding: EdgeInsets.all(paddingSize),
                               child: Text(
@@ -412,67 +426,61 @@ class _TotemInputScreenState extends State<TotemInputScreen> {
                           ),
                         ],
                       ),
-
-                      Spacer(),
-
-                      // Testo Prezzo
-                      Text(
-                        'Price: \$${tikcetPrice.toStringAsFixed(2)}',
-                        style: TextStyle(
-                          fontSize: fontSizeLarge,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-
-                      Spacer(),
-
-                      // Pulsante di conferma
-                      ElevatedButton(
-                        onPressed:
-                            plate != null &&
-                                    selectedZone != null &&
-                                    (parkingTimeHours +
-                                            parkingTimeMinutes / 60) !=
-                                        0
-                                ? () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder:
-                                          (context) => ContactlessScreen(
-                                            amount: tikcetPrice,
-                                            duration:
-                                                parkingTimeHours +
-                                                parkingTimeMinutes / 60,
-                                            zone: selectedZone!,
-                                            plate: plate!,
-                                            uid: widget.uid,
-                                            apiService: widget.apiService,
-                                          ),
-                                    ),
-                                  );
-                                }
-                                : null,
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 40,
-                            vertical: 12,
-                          ),
-                        ),
-                        child: const Text(
-                          'Proceed To Payment',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                          ),
-                        ),
-                      ),
                     ],
                   ),
                 ),
               ),
-            ),
-          ],
+
+              Spacer(),
+
+              // Testo Prezzo
+              Text(
+                'Price: €${tikcetPrice.toStringAsFixed(2)}',
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              ),
+
+              Spacer(),
+
+              // Pulsante di conferma
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed:
+                      plate != null &&
+                              selectedZone != null &&
+                              (parkingTimeHours + parkingTimeMinutes / 60) != 0
+                          ? () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder:
+                                    (context) => ContactlessScreen(
+                                      amount: tikcetPrice,
+                                      duration:
+                                          parkingTimeHours +
+                                          parkingTimeMinutes / 60,
+                                      zone: selectedZone!,
+                                      plate: plate!,
+                                      uid: widget.uid,
+                                      apiService: widget.apiService,
+                                    ),
+                              ),
+                            );
+                          }
+                          : null,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.deepPurple,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                  ),
+                  child: const Text(
+                    'Proceed To Payment',
+                    style: TextStyle(fontSize: 22),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
