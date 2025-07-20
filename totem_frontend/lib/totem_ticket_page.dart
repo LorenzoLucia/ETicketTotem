@@ -73,7 +73,8 @@ class _TotemInputScreenState extends State<TotemInputScreen> {
   }
 
   void _hideKeyboard() {
-    entry!.remove();
+    entry?.remove();
+    entry = null;
   }
 
   void _saveTextValues() {
