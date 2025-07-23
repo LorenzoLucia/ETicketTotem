@@ -1,0 +1,16 @@
+[Unit]
+Description=kiosk display
+Requires=graphical.target
+After=graphical.target
+After=network-online.target
+Requires=network-online.target
+
+[Service]
+Environment=DISPLAY=:0.0
+User=pi
+Group=pi
+Restart=on-abort
+ExecStart=/home/pi/ETicketTotem/kiosk.sh
+
+[Install]
+WantedBy=graphical.target

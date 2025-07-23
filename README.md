@@ -96,17 +96,7 @@ Disable the daemons with:
 
 `sudo systemctl disable <name>.service`
 
-If both daemons are enabled, the Raspberry pi will automatically start in kiosk mode on the flutter page served by the frontend and with the service for the rfid reader running.
+If both daemons are enabled, the Raspberry pi will automatically start in kiosk mode on the flutter page served by the frontend and with the rfid service running.
 
 The first login on the totem application has to be done with a keyboard (physical or raspbian's virtual keyboard).
 If the kiosk mode is already enabled before the first login, it has to be done with a physical keyboard.
-
-TODO: PARLARE DEI FILE .ENV
-
-        SCARICARE TUTTI I VARI FILE DAL RASPBERRY E METTERLI NELLA REPO
-
-### Repo description
-
-TODO: PARLARE DELLA CARTELLA TICKET_FILES
-
-        PARLARE DEL FUNZIONAMENTO GENERALE?
