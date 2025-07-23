@@ -18,6 +18,14 @@ Connect the RFID reader pins to the corresponding ones:
 
 ![image info](img/pin_table.png)
 
+Before starting the reader utility, it's possible to modify the websocket address. This allows only one specific IP address to read the card details:
+
+`nano read_rfid.py`
+
+insert the ip address:
+
+`async with serve(publish_numbers, "<ip_address>", 9001) as server:`
+
 Start the reader utility with:
 
 `python3 read_rfid.py`
